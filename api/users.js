@@ -3,14 +3,14 @@ const router = express.Router();
 const pool = require('../connection');
 
 // parse all JSON coming into these routes
-router.use(express.json());
+// router.use(express.json());
 
 /**
  * @route	GET  api/users/test
  * @desc	Tests users route
  * @access	public
 */
-router.get('/test', (req, res) => res.send("Users Works"));
+router.get('/testusers', (req, res,err) => res.json("users Works"));
 
 /**
  * @route	GET  api/users/
