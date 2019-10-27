@@ -24,6 +24,7 @@ router.get('/admins', (req, res) => {
   pool.query(sql, (err, results) => {
     if(err) throw err;
     res.send(results);
+    console.log("all records received");
   })  
 });
 
@@ -38,6 +39,7 @@ router.get('/login', (req, res) => {
   pool.query(sql, (err, results) => {
     if(err) throw err;
     res.send(results);
+    console.log("1 record received");
   })  
 });
 
@@ -49,7 +51,7 @@ router.get('/login', (req, res) => {
 */
 
 router.post('/registeruser', (req, res) => {
-  var sql = "INSERT INTO users (user_id, first_name, last_name, email, password, university_id) VALUES ('5555', 'Ronda', 'bland', 'rondabland@yahoo.com', 'windyday123', '3333')";
+  var sql = "INSERT INTO users (user_id, first_name, last_name, email, password, university_id) VALUES ('55558', 'Ronda', 'bland', 'rondabland1@yahoo.com', 'windyday123', '123456')";
 
   pool.query(sql, (err, results) => {
     if(err) throw err;

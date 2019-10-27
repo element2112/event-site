@@ -28,5 +28,19 @@ router.get('/', (req, res) => {
       res.send(results);
     })  
   });
+
+/**
+ * @route	post  api/users/
+ * @desc	post all users
+ * @access	public
+*/
+router.post('/addlocation', (req, res) => {
+  let sql = "";
+
+  pool.query(sql, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+  })  
+});
   
   module.exports = router;

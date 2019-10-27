@@ -4,96 +4,173 @@ const pool = require('../connection');
 // const gravatar = require('gravatar');
 // const bcrypt = require('bcryptjs');
 // const { check, validationResult } = require('express-validator/check');
-
 // router.use(express.json());
+
+/* --------------------------------------------------- */
 
 router.get('/testevents', (req, res,err) => res.json("events Works"));
 
-// THIS IS JUST SKETCHED BC IM TIRED. NEED TO BE TESTED
+/**
+ * @route	GET  api/events
+ * @desc	Get all events
+ * @access	public
+ * 
+*/
+router.get('/allevents', (req, res) => {
+  let sql = 'SELECT * from events';
 
-  /**
+  pool.query(sql, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('all events returned')
+  })  
+});
+
+/* --------------------------------------------------- */
+
+// PUBLIC EVENTS
+
+/**
  * @route	GET  api/events/publicevents
  * @desc	Get all public events
  * @access	public
 */
-router.get('/pubevents', (req, res) => {
-    let sql = 'SELECT * from users WHERE user_id = 5555';
+router.get('/publicevents', (req, res) => {
+    let sql = 'SELECT * from public_events';
   
     pool.query(sql, (err, results) => {
       if(err) throw err;
       res.send(results);
+      console.log('all public events returned')
     })  
   });
 
-  /**
- * @route	GET  api/events/publicevents:id
- * @desc	Get specific public event
+
+/**
+ * @route	POST api/events/publicevents
+ * @desc	Add a public event
  * @access	public
 */
-router.get('/pubevents:id', (req, res) => {
-    let sql = 'SELECT * from users WHERE user_id = 5555';
-  
-    pool.query(sql, (err, results) => {
-      if(err) throw err;
-      res.send(results);
-    })  
-  });
+router.post('/publicevents', (req, res) => {
+  let sql = '';
 
-  /**
- * @route	GET  api/events/rsoevents
- * @desc	Get rso events
+  pool.query(sql, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+  })  
+});
+
+/**
+ * @route	DELETE api/events/publicevents
+ * @desc	Delete a public event
  * @access	public
 */
-router.get('/rsoevents', (req, res) => {
-    let sql = 'SELECT * from users WHERE user_id = 5555';
-  
-    pool.query(sql, (err, results) => {
-      if(err) throw err;
-      res.send(results);
-    })  
-  });
+router.delete('/publicevents', (req, res) => {
+  let sql = '';
 
-  /**
- * @route	GET  api/events/rsoevents:id
- * @desc	Get specific rso event
- * @access	public
-*/
-router.get('/rsoevents:id', (req, res) => {
-    let sql = 'SELECT * from users WHERE user_id = ?';
-  
-    pool.query(sql, (err, results) => {
-      if(err) throw err;
-      res.send(results);
-    })  
-  });
+  pool.query(sql, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+  })  
+});
 
-  /**
+/* --------------------------------------------------- */
+
+// PRIVATE EVENTS
+
+/**
  * @route	GET  api/events/privateevents
- * @desc	Get all private events
+ * @desc	Get all public events
  * @access	public
 */
 router.get('/privateevents', (req, res) => {
-    let sql = 'SELECT * from users WHERE user_id = 5555';
-  
-    pool.query(sql, (err, results) => {
-      if(err) throw err;
-      res.send(results);
-    })  
-  });
+  let sql = 'SELECT * from private_events';
 
-    /**
- * @route	GET  api/events/privateevents:id
- * @desc	Get specific private event
+  pool.query(sql, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('all private events returned')
+  })  
+});
+
+
+/**
+* @route	POST api/events/privateevents
+* @desc	Add a private event
+* @access	public
+*/
+router.post('/privateevents', (req, res) => {
+let sql = '';
+
+pool.query(sql, (err, results) => {
+  if(err) throw err;
+  res.send(results);
+})  
+});
+
+/**
+* @route	DELETE api/events/privateevents
+* @desc	Delete a private event
+* @access	public
+*/
+router.delete('/privateevents', (req, res) => {
+let sql = '';
+
+pool.query(sql, (err, results) => {
+  if(err) throw err;
+  res.send(results);
+})  
+});
+
+
+/* --------------------------------------------------- */
+
+// RSO EVENT
+
+/**
+ * @route	GET  api/events/rsoevents
+ * @desc	Get all rso events
  * @access	public
 */
-router.get('/privateevents:id', (req, res) => {
-    let sql = 'SELECT * from users WHERE user_id = 5555';
-  
-    pool.query(sql, (err, results) => {
-      if(err) throw err;
-      res.send(results);
-    })  
-  });
+router.get('/rsoevents', (req, res) => {
+  let sql = 'SELECT * from rso_event';
+
+  pool.query(sql, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('all rso events returned')
+  })  
+});
+
+
+/**
+* @route	POST api/events/rsoevents
+* @desc	Add a rso event
+* @access	public
+*/
+router.post('/rsoevents', (req, res) => {
+let sql = '';
+
+pool.query(sql, (err, results) => {
+  if(err) throw err;
+  res.send(results);
+})  
+});
+
+/**
+* @route	DELETE api/events/rsoevents
+* @desc	Delete a rso event
+* @access	public
+*/
+router.delete('/rsoevents', (req, res) => {
+let sql = '';
+
+pool.query(sql, (err, results) => {
+  if(err) throw err;
+  res.send(results);
+})  
+});
+
 
 
 module.exports = router;

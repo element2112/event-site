@@ -20,7 +20,7 @@ router.get('/testuniversity', (req, res,err) => res.json("university Works"));
  * @access	public
 */
 router.get('/', (req, res) => {
-    let sql = 'SELECT * from university';
+    let sql = 'SELECT * from universities';
   
     pool.query(sql, (err, results) => {
       if(err) throw err;
