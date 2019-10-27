@@ -15,20 +15,50 @@ const pool = require('../connection');
 
 router.get('/testrso', (req, res,err) => res.json("rso Works"));
 
+/**
+ * @route	GET  api/rso/allrso
+ * @desc	Get all rsos
+ * @access	public
+*/
+router.get('/allrso', (req, res) => {
+  let sql = 'SELECT * from rso_event';
+
+  pool.query(sql, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('all rso events returned');
+  })  
+});
+
+/**
+* @route	POST  api/rso/addrso
+* @desc	add an rso
+* @access	public
+*/
+router.post('/addrso', (req, res) => {
+let sql = '';
+
+pool.query(sql, (err, results) => {
+  if(err) throw err;
+  res.send(results);
+  console.log('1 rso added');
+})  
+});
 
 
 /**
- * @route	GET  api/users/
- * @desc	Get all users
- * @access	public
+* @route	delete  api/rso/deleterso
+* @desc	delete an rso
+* @access	public
 */
-router.get('/', (req, res) => {
-    let sql = 'SELECT * from rso';
+router.delete('/deleterso', (req, res) => {
+let sql = '';
+
+pool.query(sql, (err, results) => {
+  if(err) throw err;
+  res.send(results);
+  console.log('1 rso deleted');
+})  
+});
   
-    pool.query(sql, (err, results) => {
-      if(err) throw err;
-      res.send(results);
-    })  
-  })
-  
-  module.exports = router;
+module.exports = router;

@@ -7,26 +7,54 @@ const pool = require('../connection');
 
 // router.use(express.json());
 
-/**
- * @route	GET  api/users/test
- * @desc	Tests users route
- * @access	public
-*/
 router.get('/testcomments', (req, res,err) => res.json("comments Works"));
 
 
+
 /**
- * @route	GET  api/users/
- * @desc	Get all users
+ * @route	GET  api/comments/getcomments
+ * @desc	Get all comments
  * @access	public
 */
-router.get('/', (req, res) => {
+router.get('/getcomments', (req, res) => {
     let sql = 'SELECT * from comments';
   
     pool.query(sql, (err, results) => {
       if(err) throw err;
       res.send(results);
+      console.log('all comments returned');
     })  
-  })
+  });
+
+/**
+ * @route	POST  api/comments/postcomment
+ * @desc	add a comment
+ * @access	public
+*/
+router.post('/addcomment', (req, res) => {
+  let sql = '';
+
+  pool.query(sql, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('1 comment added');
+  })  
+});
+
+
+/**
+ * @route	delete  api/comments/deletecomment
+ * @desc	delete a comment
+ * @access	public
+*/
+router.delete('/deletecomment', (req, res) => {
+  let sql = '';
+
+  pool.query(sql, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('1 comment deleted');
+  })  
+});
   
   module.exports = router;
