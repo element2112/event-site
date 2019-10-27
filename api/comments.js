@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const pool = require('../connection');
 // const gravatar = require('gravatar');
 // const bcrypt = require('bcryptjs');
 // const { check, validationResult } = require('express-validator/check');
@@ -12,7 +13,6 @@ const router = express.Router();
  * @access	public
 */
 router.get('/testcomments', (req, res,err) => res.json("comments Works"));
-
 
 
 /**
