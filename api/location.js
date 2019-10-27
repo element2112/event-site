@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const pool = require('../connection');
 // const gravatar = require('gravatar');
 // const bcrypt = require('bcryptjs');
 // const { check, validationResult } = require('express-validator/check');
@@ -14,8 +15,6 @@ router.use(express.json());
 
 router.get('/testlocation', (req, res,err) => res.json("location Works"));
 
-
-
 /**
  * @route	GET  api/users/
  * @desc	Get all users
@@ -28,6 +27,6 @@ router.get('/', (req, res) => {
       if(err) throw err;
       res.send(results);
     })  
-  })
+  });
   
   module.exports = router;
