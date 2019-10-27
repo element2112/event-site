@@ -13,6 +13,7 @@ const router = express.Router();
 */
 router.get('/testuniversity', (req, res,err) => res.json("university Works"));
 
+
 /**
  * @route	GET  api/users/
  * @desc	Get all users

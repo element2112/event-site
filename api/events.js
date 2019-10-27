@@ -6,6 +6,7 @@ const router = express.Router();
 
 // router.use(express.json());
 
+
 router.get('/testevents', (req, res,err) => res.json("events Works"));
 
 module.exports = router;

@@ -12,6 +12,7 @@ const pool = require('../connection');
 */
 router.get('/testusers', (req, res,err) => res.json("users Works"));
 
+
 /**
  * @route	GET  api/users/
  * @desc	Get all users

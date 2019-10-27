@@ -15,6 +15,7 @@ router.use(express.json());
 router.get('/testlocation', (req, res,err) => res.json("location Works"));
 
 
+
 /**
  * @route	GET  api/users/
  * @desc	Get all users
