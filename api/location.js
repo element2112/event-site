@@ -11,11 +11,11 @@ router.get('/testlocation', (req, res,err) => res.json("location Works"));
 
 
 /**
- * @route	GET  api/location/totallocations
+ * @route	GET  api/location/getlocations
  * @desc	Get all locations
  * @access	public
 */
-router.get('/locationsall', (req, res) => {
+router.get('/getlocations', (req, res) => {
     let sql = 'SELECT * from locations';
   
     pool.query(sql, (err, results) => {
@@ -23,7 +23,25 @@ router.get('/locationsall', (req, res) => {
       res.send(results);
       console.log('locations returned');
     })  
-  });
+});
+
+/**
+ * @route	GET  api/location/getlocation/:id
+ * @desc	Get a location
+ * @access	public
+*/
+router.get('/getlocations/:id', (req, res) => {
+  
+  var id = req.params.id;
+  
+  let sql = 'SELECT * from locations WHERE location_id = ?';
+
+  pool.query(sql, id, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log(' 1 location returned');
+  })  
+});
 
 /**
  * @route	post  api/location/addlocation
@@ -31,12 +49,22 @@ router.get('/locationsall', (req, res) => {
  * @access	public
 */
 router.post('/addlocation', (req, res) => {
-  let sql = "";
+  
+  var fields = {
+    location_id: req.body.location_id,
+    latitude: req.body.latitude,
+    longitude: req.body.longitude,
+    building: req.body.building,
+    room: req.body.room,
+    name: req.body.name
+  };
 
-  pool.query(sql, (err, results) => {
+  let sql = "INSERT INTO locations SET ?";
+
+  pool.query(sql, fields, (err, results) => {
     if(err) throw err;
     res.send(results);
-    console.log('location added');
+    console.log('1 location added');
   })  
 });
 
@@ -46,10 +74,13 @@ router.post('/addlocation', (req, res) => {
  * @desc	delete a location
  * @access	public
 */
-router.delete('/deletelocation', (req, res) => {
-  let sql = "";
+router.delete('/deletelocation/:id', (req, res) => {
+  
+  var id = req.params.id;
 
-  pool.query(sql, (err, results) => {
+  let sql = "DELETE FROM locations WHERE location_id = ?";
+
+  pool.query(sql, id, (err, results) => {
     if(err) throw err;
     res.send(results);
     console.log('location deleted');
