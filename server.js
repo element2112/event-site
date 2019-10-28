@@ -2,7 +2,12 @@ const express = require('express');
 const app = express();
 // const pool = require('./connection');
 const pool = require('dotenv').config();
+const bodyParser = require('body-parser');
 const PORT = process.env.PORT? process.env.PORT : 4000;
+
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
 const users = require('./api/users');
 const comments = require('./api/comments');

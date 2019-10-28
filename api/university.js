@@ -14,12 +14,18 @@ const pool = require('../connection');
 */
 router.get('/testuniversity', (req, res,err) => res.json("university Works"));
 
+router.post("/posturl",function(req,res,next){
+  
+  console.log(req.body);
+  res.send(req.body);
+})
+
 /**
  * @route	GET  api/university/
  * @desc	Get all universities
  * @access	public
 */
-router.get('/alluniversities', (req, res) => {
+router.get('/getuni', (req, res) => {
     let sql = 'SELECT * from universities';
   
     pool.query(sql, (err, results) => {
@@ -29,14 +35,42 @@ router.get('/alluniversities', (req, res) => {
   });
 
 /**
+ * @route	GET  api/university/getuni:id
+ * @desc	Get one university
+ * @access	public
+*/
+
+router.get('/getuni/:id', (req, res) => {
+
+  const id = req.params.id;
+
+  let sql = 'SELECT * FROM universities WHERE university_id = ?';
+
+  pool.query(sql, id, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('uni returned')
+  });
+});
+
+/**
  * @route	POST  api/university/registeruni
  * @desc	add uni
  * @access	public
 */
 router.post('/registeruni', (req, res) => {
-  let sql = "INSERT INTO universities (university_id, name, location, description, email_domain) VALUES ('123456', 'fsu', 'florida', 'school stuff', 'aschool@aol.com')";
-
-  pool.query(sql, (err, results) => {
+  
+  const fields = {
+    university_id: req.body.university_id,
+    name: req.body.name,
+    location: req.body.location,
+    description: req.body.description,
+    email_domain: req.body.email_domain
+  };
+ 
+  let sql = "INSERT INTO universities SET ?";
+  
+  pool.query(sql, fields, (err, results) => {
     if(err) throw err;
     res.send(results);
     console.log("1 record inserted");
@@ -49,13 +83,16 @@ router.post('/registeruni', (req, res) => {
  * @desc	delete uni
  * @access	public
 */
-router.delete('/deleteuni', (req, res) => {
-  let sql = "DELETE FROM universities WHERE university_id = 123456"
+router.delete('/deleteuni/:id', (req, res) => {
+  
+  const id = req.params.id
 
-  pool.query(sql, (err, results) => {
+  let sql = "DELETE FROM universities WHERE university_id = ?"
+
+  pool.query(sql, id, (err, results) => {
     if(err) throw err;
     res.send(results);
-    console.log("1 record inserted");
+    console.log("1 record deleted");
   });
 
 });
