@@ -4,17 +4,20 @@ const mysql = require('mysql');
 /*
 
 host=hostname
-user=username,
-password=pwd,
+user=username
+password=pwd
 database=dbname
 
 */
+
+// console.log(process.env.user);
+
 const pool = mysql.createPool({
   host: process.env.host,
-  user: process.env.username,
+  user: process.env.user,
   password: process.env.password,
   database: process.env.database,
-  connectionLimit: 10
+  connectionLimit: process.env.connectionLimit
 });
 
 module.exports = pool;

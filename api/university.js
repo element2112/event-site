@@ -19,7 +19,7 @@ router.get('/testuniversity', (req, res,err) => res.json("university Works"));
  * @desc	Get all universities
  * @access	public
 */
-router.get('/', (req, res) => {
+router.get('/alluniversities', (req, res) => {
     let sql = 'SELECT * from universities';
   
     pool.query(sql, (err, results) => {
