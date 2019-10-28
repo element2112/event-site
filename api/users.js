@@ -18,7 +18,7 @@ router.get('/testusers', (req, res,err) => res.json("users Works"));
  * @desc	Get all users (admins/superadmins only)
  * @access	public
 */
-router.get('/admins', (req, res) => {
+router.get('/getusers', (req, res) => {
   let sql = 'SELECT * from users';
 
   pool.query(sql, (err, results) => {
@@ -51,7 +51,7 @@ router.get('/login', (req, res) => {
 */
 
 router.post('/registeruser', (req, res) => {
-  var sql = "INSERT INTO users (user_id, first_name, last_name, email, password, university_id) VALUES ('55558', 'Ronda', 'bland', 'rondabland1@yahoo.com', 'windyday123', '123456')";
+  var sql = "INSERT INTO users VALUES ?";
 
   pool.query(sql, (err, results) => {
     if(err) throw err;

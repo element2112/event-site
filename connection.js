@@ -1,11 +1,19 @@
 const mysql = require('mysql');
 
+// create a .env file in root and manually insert the db credentials. add the .env to gitignore to protect from github
+/*
+
+host=hostname
+user=username,
+password=pwd,
+database=dbname
+
+*/
 const pool = mysql.createPool({
-  host: 'college-events.cgbnlnlzis7k.us-east-1.rds.amazonaws.com',
-  user: 'admin',
-  password: 'events#1',
-  port: '3306',
-  database: 'college_events',
+  host: process.env.host,
+  user: process.env.username,
+  password: process.env.password,
+  database: process.env.database,
   connectionLimit: 10
 });
 

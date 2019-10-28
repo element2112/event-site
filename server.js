@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
-const pool = require('./connection');
+// const pool = require('./connection');
+const pool = require('dotenv').config();
 const PORT = process.env.PORT? process.env.PORT : 4000;
 
 const users = require('./api/users');
