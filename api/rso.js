@@ -20,10 +20,28 @@ router.get('/testrso', (req, res,err) => res.json("rso Works"));
  * @desc	Get all rsos
  * @access	public
 */
-router.get('/allrso', (req, res) => {
-  let sql = 'SELECT * from rso_event';
+router.get('/getrso', (req, res) => {
+  let sql = 'SELECT * from rso';
 
   pool.query(sql, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('all rso events returned');
+  })  
+});
+
+/**
+ * @route	GET  api/rso/allrso
+ * @desc	Get an rsos
+ * @access	public
+*/
+router.get('/getrso/:id', (req, res) => {
+  
+  var id = req.params.id;
+
+  let sql = 'SELECT * from rso WHERE rso_id = ?';
+
+  pool.query(sql, id, (err, results) => {
     if(err) throw err;
     res.send(results);
     console.log('all rso events returned');
@@ -36,9 +54,17 @@ router.get('/allrso', (req, res) => {
 * @access	public
 */
 router.post('/addrso', (req, res) => {
-let sql = '';
 
-pool.query(sql, (err, results) => {
+  var fields = {
+    rso_id: req.body.rso_id,
+    name: req.body.name,
+    admin: req.body.name,
+    university: req.body.university
+  }
+
+  let sql = 'INSERT INTO rso SET ?';
+
+pool.query(sql, fields, (err, results) => {
   if(err) throw err;
   res.send(results);
   console.log('1 rso added');
@@ -51,10 +77,13 @@ pool.query(sql, (err, results) => {
 * @desc	delete an rso
 * @access	public
 */
-router.delete('/deleterso', (req, res) => {
-let sql = '';
+router.delete('/deleterso/:id', (req, res) => {
 
-pool.query(sql, (err, results) => {
+  var id = req.params.id;
+
+  let sql = 'DELETE FROM rso WHERE rso_id = ?';
+
+pool.query(sql, id, (err, results) => {
   if(err) throw err;
   res.send(results);
   console.log('1 rso deleted');
