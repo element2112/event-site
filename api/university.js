@@ -42,14 +42,14 @@ router.get('/getuni', (req, res) => {
 
 router.get('/getuni/:id', (req, res) => {
 
-  const id = req.params.id;
+  var id = req.params.id;
 
   let sql = 'SELECT * FROM universities WHERE university_id = ?';
 
   pool.query(sql, id, (err, results) => {
     if(err) throw err;
     res.send(results);
-    console.log('uni returned')
+    console.log('1 university returned')
   });
 });
 
@@ -60,7 +60,7 @@ router.get('/getuni/:id', (req, res) => {
 */
 router.post('/registeruni', (req, res) => {
   
-  const fields = {
+  var fields = {
     university_id: req.body.university_id,
     name: req.body.name,
     location: req.body.location,
@@ -85,7 +85,7 @@ router.post('/registeruni', (req, res) => {
 */
 router.delete('/deleteuni/:id', (req, res) => {
   
-  const id = req.params.id
+  var id = req.params.id;
 
   let sql = "DELETE FROM universities WHERE university_id = ?"
 

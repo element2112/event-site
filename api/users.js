@@ -33,13 +33,16 @@ router.get('/getusers', (req, res) => {
  * @desc	Get specific user
  * @access	public
 */
-router.get('/login', (req, res) => {
-  let sql = 'SELECT * from users WHERE user_id = 5555';
+router.get('/login/:id', (req, res) => {
+  
+  var id = req.params.id;
+  
+  let sql = 'SELECT * from users WHERE user_id = ?';
 
-  pool.query(sql, (err, results) => {
+  pool.query(sql, id, (err, results) => {
     if(err) throw err;
     res.send(results);
-    console.log("1 record received");
+    console.log("1 record returned");
   })  
 });
 
@@ -51,12 +54,22 @@ router.get('/login', (req, res) => {
 */
 
 router.post('/registeruser', (req, res) => {
-  var sql = "INSERT INTO users VALUES ?";
+  
+  var fields = {
+    user_id: req.body.user_id,
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
+    email: req.body.email,
+    password: req.body.password,
+    university_id: req.body.university_id
+  }
+  
+  let sql = "INSERT INTO users SET ?";
 
-  pool.query(sql, (err, results) => {
+  pool.query(sql, fields, (err, results) => {
     if(err) throw err;
     res.send(results);
-    console.log("1 record inserted");
+    console.log("1 recordu inserted");
   });
 
 });
@@ -67,10 +80,13 @@ router.post('/registeruser', (req, res) => {
  * @desc	delete a user
  * @access	public
 */
-router.delete('/deleteuser', (req, res) => {
-  let sql = "DELETE FROM users WHERE user_id = 5556"
+router.delete('/deleteuser/:id', (req, res) => {
+  
+  var id = req.params.id;
+  
+  let sql = "DELETE FROM users WHERE user_id = ?"
 
-  pool.query(sql, (err, results) => {
+  pool.query(sql, id, (err, results) => {
     if(err) throw err;
     res.send(results);
     console.log("1 record deleted");
