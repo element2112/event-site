@@ -69,11 +69,10 @@ router.post('/registeruser', (req, res) => {
   pool.query(sql, fields, (err, results) => {
     if(err) throw err;
     res.send(results);
-    console.log("1 recordu inserted");
+    console.log("1 records inserted");
   });
 
 });
-
 
 /**
  * @route	DELETE  api/users/deleteuser

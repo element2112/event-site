@@ -16,7 +16,7 @@ router.get('/testevents', (req, res,err) => res.json("events Works"));
  * @access	public
  * 
 */
-router.get('/allevents', (req, res) => {
+router.get('/getevents', (req, res) => {
   let sql = 'SELECT * from events';
 
   pool.query(sql, (err, results) => {
@@ -35,7 +35,7 @@ router.get('/allevents', (req, res) => {
  * @desc	Get all public events
  * @access	public
 */
-router.get('/publicevents', (req, res) => {
+router.get('/getpublic', (req, res) => {
     let sql = 'SELECT * from public_events';
   
     pool.query(sql, (err, results) => {
@@ -43,7 +43,27 @@ router.get('/publicevents', (req, res) => {
       res.send(results);
       console.log('all public events returned')
     })  
-  });
+});
+
+/**
+ * @route	GET  api/events/publicevents
+ * @desc	Get a public events
+ * @access	public
+*/
+router.get('/getpublic/:id', (req, res) => {
+  
+  var id = req.params.id;
+  
+  let sql = 'SELECT * from public_events WHERE event = ?';
+
+  pool.query(sql, id, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('all public events returned')
+  })
+  
+});
+
 
 
 /**
@@ -51,10 +71,17 @@ router.get('/publicevents', (req, res) => {
  * @desc	Add a public event
  * @access	public
 */
-router.post('/publicevents', (req, res) => {
-  let sql = '';
+router.post('/addpublic', (req, res) => {
+  
+  var fields = {
+    event: req.body.events,
+    approver: req.body.approver,
+    approved: req.body.approved
+  }
 
-  pool.query(sql, (err, results) => {
+  let sql = "INSERT INTO public_events SET ?";
+
+  pool.query(sql, fields, (err, results) => {
     if(err) throw err;
     res.send(results);
   })  
@@ -65,10 +92,13 @@ router.post('/publicevents', (req, res) => {
  * @desc	Delete a public event
  * @access	public
 */
-router.delete('/publicevents', (req, res) => {
-  let sql = '';
+router.delete('/deletepublic/:id', (req, res) => {
 
-  pool.query(sql, (err, results) => {
+  var id = req.params.id;
+
+  let sql = "DELETE FROM public_events WHERE event = ?";
+
+  pool.query(sql, id, (err, results) => {
     if(err) throw err;
     res.send(results);
   })  
@@ -83,10 +113,28 @@ router.delete('/publicevents', (req, res) => {
  * @desc	Get all public events
  * @access	public
 */
-router.get('/privateevents', (req, res) => {
+router.get('/getprivate', (req, res) => {
   let sql = 'SELECT * from private_events';
 
   pool.query(sql, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('all private events returned')
+  })  
+});
+
+/**
+ * @route	GET  api/events/privateevents
+ * @desc	Get all public events
+ * @access	public
+*/
+router.get('/getprivate/:id', (req, res) => {
+
+  var id = req.params.id;
+
+  let sql = 'SELECT * FROM private_events WHERE events_id = ?';
+
+  pool.query(sql, id, (err, results) => {
     if(err) throw err;
     res.send(results);
     console.log('all private events returned')
@@ -99,13 +147,21 @@ router.get('/privateevents', (req, res) => {
 * @desc	Add a private event
 * @access	public
 */
-router.post('/privateevents', (req, res) => {
-let sql = '';
+router.post('/addprivate', (req, res) => {
+  
+  var fields = {
+    events_id: req.body.events_id,
+    approver_id: req.body.approver_id,
+    approved: req.body.approved
+  }
+  
+  let sql = "INSERT INTO private_events WHERE events_id = ?";
 
-pool.query(sql, (err, results) => {
-  if(err) throw err;
-  res.send(results);
-})  
+  pool.query(sql, fields, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+  });
+
 });
 
 /**
@@ -113,13 +169,16 @@ pool.query(sql, (err, results) => {
 * @desc	Delete a private event
 * @access	public
 */
-router.delete('/privateevents', (req, res) => {
-let sql = '';
+router.delete('/deleteprivate/:id', (req, res) => {
+  
+  var id = req.params.id;
+  
+  let sql = "DELETE FROM private_events WHERE events_id = ?";
 
-pool.query(sql, (err, results) => {
-  if(err) throw err;
-  res.send(results);
-})  
+  pool.query(sql, id, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+  })  
 });
 
 
@@ -132,7 +191,7 @@ pool.query(sql, (err, results) => {
  * @desc	Get all rso events
  * @access	public
 */
-router.get('/rsoevents', (req, res) => {
+router.get('/getrsoevents', (req, res) => {
   let sql = 'SELECT * from rso_event';
 
   pool.query(sql, (err, results) => {
@@ -142,19 +201,44 @@ router.get('/rsoevents', (req, res) => {
   })  
 });
 
+/**
+ * @route	GET  api/events/rsoevents
+ * @desc	Get all rso events
+ * @access	public
+*/
+router.get('/getrsoevents/:id', (req, res) => {
+  
+  var id = req.params.id;
+  
+  let sql = 'SELECT * from rso_event WHERE rso_org = ?';
+
+  pool.query(sql, id, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('all rso events returned')
+  });
+
+});
+
 
 /**
 * @route	POST api/events/rsoevents
 * @desc	Add a rso event
 * @access	public
 */
-router.post('/rsoevents', (req, res) => {
-let sql = '';
+router.post('/addrsoevents', (req, res) => {
+  
+  var fields = {
+    rso_org: req.body.rso_org,
+    rso_event_id: req.body.rso_event_id
+  }
+  
+  let sql = "INSERT INTO rso_event SET ?";
 
-pool.query(sql, (err, results) => {
-  if(err) throw err;
-  res.send(results);
-})  
+  pool.query(sql, fields, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+  }); 
 });
 
 /**
@@ -162,13 +246,16 @@ pool.query(sql, (err, results) => {
 * @desc	Delete a rso event
 * @access	public
 */
-router.delete('/rsoevents', (req, res) => {
-let sql = '';
+router.delete('/deletersoevents/:id', (req, res) => {
 
-pool.query(sql, (err, results) => {
-  if(err) throw err;
-  res.send(results);
-})  
+  var id = req.params.id;
+
+  let sql = 'DELETE FROM rso_event WHERE rso_event_id = ?';
+
+  pool.query(sql, id, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+  });
 });
 
 

@@ -83,11 +83,12 @@ router.delete('/deleterso/:id', (req, res) => {
 
   let sql = 'DELETE FROM rso WHERE rso_id = ?';
 
-pool.query(sql, id, (err, results) => {
-  if(err) throw err;
-  res.send(results);
-  console.log('1 rso deleted');
-})  
+  pool.query(sql, id, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('1 rso deleted');
+  });
+  
 });
   
 module.exports = router;
