@@ -1,1 +1,8 @@
+body {
+  font-family: 'Source Sans Pro', sans-serif!important;
+}
 
+::placeholder { 
+  color: #e0e0e0!important;
+  opacity: 1; 
+}
