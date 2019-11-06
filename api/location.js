@@ -21,7 +21,7 @@ router.get('/getlocations', (req, res) => {
     pool.query(sql, (err, results) => {
       if(err) throw err;
       res.send(results);
-      console.log('locations returned');
+      console.log('all locations returned');
     })  
 });
 
@@ -34,7 +34,7 @@ router.get('/getlocations/:id', (req, res) => {
   
   var id = req.params.id;
   
-  let sql = 'SELECT * from locations WHERE location_id = ?';
+  let sql = 'SELECT * from locations WHERE loc_id = ?';
 
   pool.query(sql, id, (err, results) => {
     if(err) throw err;
@@ -50,12 +50,8 @@ router.get('/getlocations/:id', (req, res) => {
 */
 router.post('/addlocation', (req, res) => {
   
-  var fields = {
-    location_id: req.body.location_id,
-    latitude: req.body.latitude,
-    longitude: req.body.longitude,
-    building: req.body.building,
-    room: req.body.room,
+  const fields = {
+    loc_id: req.body.loc_id,
     name: req.body.name
   };
 
@@ -78,12 +74,12 @@ router.delete('/deletelocation/:id', (req, res) => {
   
   var id = req.params.id;
 
-  let sql = "DELETE FROM locations WHERE location_id = ?";
+  let sql = "DELETE FROM locations WHERE loc_id = ?";
 
   pool.query(sql, id, (err, results) => {
     if(err) throw err;
     res.send(results);
-    console.log('location deleted');
+    console.log('1 location deleted');
   })  
 });
   

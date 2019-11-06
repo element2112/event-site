@@ -1,4 +1,5 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const router = express.Router();
 const pool = require('../connection');
 
@@ -19,13 +20,15 @@ router.get('/testusers', (req, res,err) => res.json("users Works"));
  * @access	public
 */
 router.get('/getusers', (req, res) => {
+  
   let sql = 'SELECT * from users';
 
   pool.query(sql, (err, results) => {
     if(err) throw err;
     res.send(results);
     console.log("all records received");
-  })  
+  })
+
 });
 
 /**
@@ -33,17 +36,19 @@ router.get('/getusers', (req, res) => {
  * @desc	Get specific user
  * @access	public
 */
-router.get('/login/:id', (req, res) => {
-  
+router.get('/getusers/login/:id', (req, res) => {
+
+
   var id = req.params.id;
   
   let sql = 'SELECT * from users WHERE user_id = ?';
 
   pool.query(sql, id, (err, results) => {
-    if(err) throw err;
-    res.send(results);
-    console.log("1 record returned");
-  })  
+      if(err) throw err;
+      res.send(results);
+      console.log("1 user returned");
+    });
+
 });
 
 
@@ -61,7 +66,7 @@ router.post('/registeruser', (req, res) => {
     last_name: req.body.last_name,
     email: req.body.email,
     password: req.body.password,
-    university_id: req.body.university_id
+    uni_id: req.body.university_id
   }
   
   let sql = "INSERT INTO users SET ?";

@@ -21,13 +21,14 @@ router.get('/testrso', (req, res,err) => res.json("rso Works"));
  * @access	public
 */
 router.get('/getrso', (req, res) => {
-  let sql = 'SELECT * from rso';
+  let sql = 'SELECT * from rsos';
 
   pool.query(sql, (err, results) => {
     if(err) throw err;
     res.send(results);
-    console.log('all rso events returned');
-  })  
+    console.log('all rsos returned');
+  })
+  
 });
 
 /**
@@ -39,12 +40,12 @@ router.get('/getrso/:id', (req, res) => {
   
   var id = req.params.id;
 
-  let sql = 'SELECT * from rso WHERE rso_id = ?';
+  let sql = 'SELECT * from rsos WHERE rso_id = ?';
 
   pool.query(sql, id, (err, results) => {
     if(err) throw err;
     res.send(results);
-    console.log('all rso events returned');
+    console.log('all rsos returned');
   })  
 });
 
@@ -57,18 +58,20 @@ router.post('/addrso', (req, res) => {
 
   var fields = {
     rso_id: req.body.rso_id,
+    approved: req.body.approved,
+    active: req.body.active,
     name: req.body.name,
-    admin: req.body.name,
-    university: req.body.university
+    uni_id: req.body.uni_id
   }
 
-  let sql = 'INSERT INTO rso SET ?';
+  let sql = 'INSERT INTO rsos SET ?';
 
-pool.query(sql, fields, (err, results) => {
-  if(err) throw err;
-  res.send(results);
-  console.log('1 rso added');
-})  
+  pool.query(sql, fields, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('1 rso added');
+  });
+
 });
 
 
@@ -81,7 +84,7 @@ router.delete('/deleterso/:id', (req, res) => {
 
   var id = req.params.id;
 
-  let sql = 'DELETE FROM rso WHERE rso_id = ?';
+  let sql = 'DELETE FROM rsos WHERE rso_id = ?';
 
   pool.query(sql, id, (err, results) => {
     if(err) throw err;

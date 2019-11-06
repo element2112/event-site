@@ -14,11 +14,11 @@ const pool = require('../connection');
 */
 router.get('/testuniversity', (req, res,err) => res.json("university Works"));
 
-router.post("/posturl",function(req,res,next){
+// router.post("/posturl",function(req,res,next){
   
-  console.log(req.body);
-  res.send(req.body);
-})
+//   console.log(req.body);
+//   res.send(req.body);
+// })
 
 /**
  * @route	GET  api/university/
@@ -31,6 +31,7 @@ router.get('/getuni', (req, res) => {
     pool.query(sql, (err, results) => {
       if(err) throw err;
       res.send(results);
+      console.log('all universities returned')
     });
   });
 
@@ -42,14 +43,14 @@ router.get('/getuni', (req, res) => {
 
 router.get('/getuni/:id', (req, res) => {
 
-  var id = req.params.id;
+  const id = req.params.id;
 
-  let sql = 'SELECT * FROM universities WHERE university_id = ?';
+  let sql = 'SELECT * FROM universities WHERE uni_id = ?';
 
   pool.query(sql, id, (err, results) => {
     if(err) throw err;
     res.send(results);
-    console.log('1 university returned')
+    console.log('1 university returned');
   });
 });
 
@@ -60,11 +61,10 @@ router.get('/getuni/:id', (req, res) => {
 */
 router.post('/registeruni', (req, res) => {
   
-  var fields = {
-    university_id: req.body.university_id,
+  const fields = {
+    uni_id: req.body.uni_id,
     name: req.body.name,
-    location: req.body.location,
-    description: req.body.description,
+    address: req.body.address,
     email_domain: req.body.email_domain
   };
  
@@ -73,7 +73,7 @@ router.post('/registeruni', (req, res) => {
   pool.query(sql, fields, (err, results) => {
     if(err) throw err;
     res.send(results);
-    console.log("1 record inserted");
+    console.log("university added");
   });
 
 });
@@ -85,14 +85,14 @@ router.post('/registeruni', (req, res) => {
 */
 router.delete('/deleteuni/:id', (req, res) => {
   
-  var id = req.params.id;
+  const id = req.params.id;
 
-  let sql = "DELETE FROM universities WHERE university_id = ?"
+  let sql = "DELETE FROM universities WHERE uni_id = ?"
 
   pool.query(sql, id, (err, results) => {
     if(err) throw err;
     res.send(results);
-    console.log("1 record deleted");
+    console.log("university deleted");
   });
 
 });

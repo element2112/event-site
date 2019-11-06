@@ -23,7 +23,8 @@ router.get('/getcomments', (req, res) => {
       if(err) throw err;
       res.send(results);
       console.log('all comments returned');
-    })  
+    });
+    
   });
 
 /**
@@ -32,13 +33,24 @@ router.get('/getcomments', (req, res) => {
  * @access	public
 */
 router.post('/addcomment', (req, res) => {
-  let sql = '';
+  
+  let sql = "INSERT INTO comments SET ?";
 
-  pool.query(sql, (err, results) => {
+  const fields = {
+    comment_id: req.body.comment_id,
+    text: req.body.text,
+    timestamp: req.body.timestamp,
+    rating: req.body.rating,
+    event_id: req.body.event_id,
+    user_id: req.body.user_id
+  };
+
+  pool.query(sql, fields, (err, results) => {
     if(err) throw err;
     res.send(results);
     console.log('1 comment added');
-  })  
+  });
+
 });
 
 
@@ -47,14 +59,18 @@ router.post('/addcomment', (req, res) => {
  * @desc	delete a comment
  * @access	public
 */
-router.delete('/deletecomment', (req, res) => {
-  let sql = '';
+router.delete('/deletecomment/:id', (req, res) => {
+  
+  const id = req.params.id;
+  
+  let sql = "DELETE FROM comments WHERE comment_id = ?";
 
-  pool.query(sql, (err, results) => {
+  pool.query(sql, id, (err, results) => {
     if(err) throw err;
     res.send(results);
     console.log('1 comment deleted');
-  })  
+  });
+
 });
   
 module.exports = router;
