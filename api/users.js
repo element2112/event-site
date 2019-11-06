@@ -68,7 +68,7 @@ router.post('/registeruser', (req, res) => {
     last_name: req.body.last_name,
     email: req.body.email,
     password: req.body.password,
-    uni_id: req.body.university_id
+    uni_id: req.body.uni_id
   }
   
   let sql = "INSERT INTO users SET ?";
@@ -76,7 +76,7 @@ router.post('/registeruser', (req, res) => {
   pool.query(sql, fields, (err, results) => {
     if(err) throw err;
     res.send(results);
-    console.log("1 records inserted");
+    console.log("1 user added");
   });
 
 });
