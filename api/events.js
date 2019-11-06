@@ -47,7 +47,7 @@ router.post('/addevent', (req, res) => {
     if(err) throw err;
     res.send(results);
     console.log('1 event added');
-  })
+  });
 
 });
 

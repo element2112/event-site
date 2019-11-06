@@ -2,6 +2,9 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const pool = require('../connection');
+const uni = require('./university');
+
+router.use('/university', uni);
 
 // parse all JSON coming into these routes
 // router.use(express.json());
@@ -60,8 +63,7 @@ router.get('/getusers/login/:id', (req, res) => {
 
 router.post('/registeruser', (req, res) => {
   
-  var fields = {
-    user_id: req.body.user_id,
+  const fields = {
     first_name: req.body.first_name,
     last_name: req.body.last_name,
     email: req.body.email,
