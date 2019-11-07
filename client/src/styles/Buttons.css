@@ -1,0 +1,45 @@
+.request-btn {
+  border: 1px solid #984B43!important;
+  background-color: #ffffff!important;
+  color: #984B43!important;
+}
+
+.request-btn:hover {
+  background-color: #984B43!important;
+  color: #ffffff!important;
+}
+
+.approve-btn {
+  border: 1px solid #009688!important;
+  color: #009688!important;
+  background-color: #ffffff!important;
+}
+
+.approve-btn:hover {
+  background-color: #009688!important;
+  color: #ffffff!important;
+}
+
+.decline-btn {
+  border: 1px solid #f44336!important;
+  color: #f44336!important;
+  background-color: #ffffff!important;
+  margin-left: 10px;
+}
+
+.decline-btn:hover {
+  background-color: #f44336!important;
+  color: #ffffff!important;
+}
+
+.event-drop-btn {
+  border: 3px solid #e0e0e0!important;
+  background-color: #ffffff!important;
+  color: #e0e0e0!important;
+  outline: none;
+}
+
+.event-date-btn {
+  border: none!important;
+  color: #9e9e9e!important;
+}

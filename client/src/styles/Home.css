@@ -1,0 +1,114 @@
+.border {
+  border: black 2px solid;
+}
+
+#home-container {
+  letter-spacing: 0.05cm
+}
+
+#home-title {
+  color: #f0edee;
+  font-weight: 700;
+  margin: 15% 15% 15% 15%;
+  font-size: 8vh;
+}
+
+#home-subtitle {
+  margin: 25% 5% 15% 15%;
+  line-height: 3em;
+  font-size: 4vh;
+}
+
+#home-col-1 {
+  background-color: #f0edee;
+  height: 100vh!important;
+  background-image: url(../desert.png);
+}
+
+#home-col-2 {
+  background-color: #984B43;
+  height: 100vh!important;
+}
+
+.home-card {
+  background-color: #f0edee;
+  color: black;
+  margin-top: 40%;
+  box-shadow: 0 0 20px #000
+}
+
+#home-register-card {
+  margin-top: 5%;
+}
+
+.home-card-color {
+  background-color: #f0edee!important;
+}
+
+#home-card-header {
+  z-index: 1;
+  -webkit-box-shadow: 0 6px 4px -4px #d6d0d2;
+  -moz-box-shadow: 0 6px 4px -4px #d6d0d2;
+       box-shadow: 0 6px 4px -4px #d6d0d2;
+  font-weight: bold;
+  color: #412234;
+}
+
+.home-button {
+  background-color: #412234!important;
+  border-color: #412234!important;
+  font-weight: bold!important;
+}
+
+.home-button:hover {
+  background-color: #61344e!important;
+}
+
+input {
+  border: 3px solid #e0e0e0!important;
+  outline: none;
+}
+
+.home-textarea {
+  border: 3px solid #e0e0e0!important;
+  outline: none;
+}
+
+.home-input {
+  height: 8vh!important;
+  margin-bottom: 5vh!important;
+  margin-top: 3vh!important;
+}
+
+.request-input {
+  height: 8vh!important;
+  margin-bottom: 1vh!important;
+  margin-top: 1vh!important;
+}
+
+.home-register-input {
+  height: 6vh!important;
+  margin-bottom: 0vh!important;
+  margin-top: 0vh!important;
+}
+
+#home-register-button {
+  height: 5vh!important;
+  padding: 2px!important;
+}
+
+.home-link {
+  color: #412234;
+  text-align: left!important;
+}
+
+.home-link:hover {
+  color: #755065;
+}
+
+.home-dropdown {
+  border: 3px solid #e0e0e0!important;
+  background-color: white!important;
+  color: #e0e0e0!important;
+  text-align: left!important;
+}
