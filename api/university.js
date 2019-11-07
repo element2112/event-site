@@ -2,12 +2,6 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../connection');
 
-// const gravatar = require('gravatar');
-// const bcrypt = require('bcryptjs');
-// const { check, validationResult } = require('express-validator/check');
-
-// router.use(express.json());
-
 /**
  * @route	GET  api/university/testuniversity
  * @desc	Tests users route
@@ -15,11 +9,6 @@ const pool = require('../connection');
 */
 router.get('/testuniversity', (req, res,err) => res.json("university Works"));
 
-// router.post("/posturl",function(req,res,next){
-  
-//   console.log(req.body);
-//   res.send(req.body);
-// })
 
 /**
  * @route	GET  api/university/
@@ -37,11 +26,10 @@ router.get('/getunis', (req, res) => {
   });
 
 /**
- * @route	GET  api/university/getuni:id
+ * @route	GET  api/university/getuni/uni_id
  * @desc	Get one university
  * @access	public
 */
-
 router.get('/getuni/:id', (req, res) => {
 
   const id = req.params.id;
@@ -109,7 +97,7 @@ router.post('/registeruni', (req, res) => {
 });
 
 /**
- * @route	DELETE  api/university/deleteuni
+ * @route	DELETE  api/university/deleteuni/uni_id
  * @desc	delete uni
  * @access	public
 */

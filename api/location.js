@@ -1,14 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../connection');
-// const gravatar = require('gravatar');
-// const bcrypt = require('bcryptjs');
-// const { check, validationResult } = require('express-validator/check');
-
-// router.use(express.json());
 
 router.get('/testlocation', (req, res,err) => res.json("location Works"));
-
 
 /**
  * @route	GET  api/location/getlocations
@@ -26,15 +20,15 @@ router.get('/getlocations', (req, res) => {
 });
 
 /**
- * @route	GET  api/location/getlocation/:id
+ * @route	GET  api/location/getlocation/uni_id
  * @desc	Get a location
  * @access	public
 */
 router.get('/getlocations/:id', (req, res) => {
   
-  var id = req.params.id;
+  const id = req.params.id;
   
-  let sql = 'SELECT * from locations WHERE loc_id = ?';
+  let sql = 'SELECT * from locations WHERE uni_id = ?';
 
   pool.query(sql, id, (err, results) => {
     if(err) throw err;
@@ -51,7 +45,7 @@ router.get('/getlocations/:id', (req, res) => {
 router.post('/addlocation', (req, res) => {
   
   const fields = {
-    loc_id: req.body.loc_id,
+    uni_id: req.body.uni_id,
     name: req.body.name
   };
 
@@ -67,8 +61,8 @@ router.post('/addlocation', (req, res) => {
 
 
 /**
- * @route	post  api/location/deletelocation
- * @desc	delete a location
+ * @route	post  api/location/deletelocation/loc_id
+ * @desc	delete a location by loc_id
  * @access	public
 */
 router.delete('/deletelocation/:id', (req, res) => {
