@@ -17,7 +17,7 @@ class RequestRSO extends React.Component {
         <Form.Group controlId="form-basic-rso-students">
           <Form.Control as="textarea" placeholder="Add 5 students" className="home-textarea" rows="10"></Form.Control>
         </Form.Group>
-        <Button size="md" type="submit">
+        <Button size="md" type="submit" className="request-btn">
           REQUEST
         </Button>
       </Form>

@@ -38,7 +38,7 @@
 }
 
 #home-register-card {
-  margin-top: 30%;
+  margin-top: 5%;
 }
 
 .home-card-color {
@@ -61,7 +61,7 @@
 }
 
 .home-button:hover {
-  background-color: #2b5e42!important;
+  background-color: #61344e!important;
 }
 
 input {
@@ -80,10 +80,16 @@ input {
   margin-top: 3vh!important;
 }
 
+.request-input {
+  height: 8vh!important;
+  margin-bottom: 1vh!important;
+  margin-top: 1vh!important;
+}
+
 .home-register-input {
   height: 6vh!important;
-  margin-bottom: 2vh!important;
-  margin-top: 1vh!important;
+  margin-bottom: 0vh!important;
+  margin-top: 0vh!important;
 }
 
 #home-register-button {

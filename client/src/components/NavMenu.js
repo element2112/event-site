@@ -1,12 +1,17 @@
 import React from "react";
 import "../styles/App.css";
 import "../styles/NavMenu.css";
-import {Navbar, NavDropdown, Form, FormControl, Button, NavItem, Nav, Container} from "react-bootstrap";
+import {Navbar, Nav, Container} from "react-bootstrap";
 
 
 class NavMenu extends React.Component {
   state = {
-    isSuperAdmin: true
+    isSuperAdmin: false
+  }
+
+  componentDidMount() {
+    this.checkIfSuperAdmin();
+    console.log(this.props)
   }
 
   checkIfSuperAdmin = () => {

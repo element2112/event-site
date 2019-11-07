@@ -11,11 +11,14 @@ class BackgroundCard extends React.Component {
 
     return (
       <Card className="bg-card">
-        <Card.Header as="h2" className="home-card-color" id="home-card-header">{this.props.title}{this.props.button}</Card.Header>
-        <Card.Body>
+        <Card.Header as="h2" className="home-card-color" id="home-card-header">
+          {this.props.title}
+          <div style={{display: "inline", float: "right"}}>
+            {this.props.button}
+          </div>
+        </Card.Header>
+        <Card.Body style={{"overflow-y": "scroll"}}>
           {this.props.items}
-          {this.props.approveBtn}
-          {this.props.declinebtn}
         </Card.Body>
       </Card>
     )

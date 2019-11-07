@@ -82,6 +82,15 @@ class HomeCard extends React.Component {
                     <Form.Group controlId="form-basic-confirm-password">
                       <Form.Control type="password" placeholder="Confirm Password" className="home-input home-register-input"></Form.Control>
                     </Form.Group>
+                    <Dropdown>
+                      <Dropdown.Toggle block id="dropdown-basic" className="home-dropdown">
+                        Select School
+                      </Dropdown.Toggle>
+
+                      <Dropdown.Menu>
+                        {universities}
+                      </Dropdown.Menu>
+                    </Dropdown>
                     <Button size="lg" block className="home-button home-input" type="submit" id="home-register-button">
                       REGISTER
                     </Button>
@@ -109,15 +118,16 @@ class HomeCard extends React.Component {
                 <Form.Group controlId="form-basic-confirm-password">
                   <Form.Control type="password" placeholder="Confirm Password" className="home-input home-register-input"></Form.Control>
                 </Form.Group>
-                <Dropdown>
-                  <Dropdown.Toggle block id="dropdown-basic" className="home-dropdown">
-                    Select School
-                  </Dropdown.Toggle>
-
-                  <Dropdown.Menu>
-                    {universities}
-                  </Dropdown.Menu>
-                </Dropdown>
+                <Form.Group controlId="form-basic-college-name">
+                  <Form.Control type="input" placeholder="University Name" className="home-input home-register-input"></Form.Control>
+                </Form.Group>
+                <Form.Group controlId="form-basic-college-address">
+                  <Form.Control type="input" placeholder="University Address" className="home-input home-register-input"></Form.Control>
+                </Form.Group>
+                <Form.Group controlId="form-basic-college-email">
+                  <Form.Control type="input" placeholder="University Email Domain" className="home-input home-register-input"></Form.Control>
+                </Form.Group>
+                
                 <Button size="lg" block className="home-button home-input" type="submit" id="home-register-button">
                   REGISTER
                 </Button>

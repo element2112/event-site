@@ -8,15 +8,33 @@ import "../styles/Page.css";
 
 class RSOs extends React.Component {
   state = {
-    events: [{name: "Alpha Beta Charlie Delta Elephany"}, {name: "UCF HACKS"}]
+    rsos: [{id:"1", name: "Alpha Beta Charlie Delta Elephant"}, {name: "UCF HACKS"},
+              {id:"2", name: "Alpha Beta Charlie Delta Elephant"}, {name: "UCF HACKS"},
+              {id:"3", name: "Alpha Beta Charlie Delta Elephant"}, {name: "UCF HACKS"},
+              {id:"4", name: "Alpha Beta Charlie Delta Elephant"}, {name: "UCF HACKS"},
+              {id:"5", name: "Alpha Beta Charlie Delta Elephant"}, {name: "UCF HACKS"}],
+    memberRSOs: ["1", "2", "5"]
+  }
+
+  componentDidMount() {
+    
   }
 
   render () {
-    const rsos = this.state.events.map((rso, key) => 
-      <InfoCard info={rso.name}></InfoCard>
+    const joinRsoBtn = <Button variant="primary" className="approve-btn">JOIN</Button>
+
+    const leaveRsoBtn = <Button variant="primary" className="decline-btn">LEAVE</Button>
+
+    const rsos = this.state.rsos.map((rso, key) => {
+      if(this.state.memberRSOs.includes(rso.id)) {
+        return (<InfoCard info={rso.name} button1={leaveRsoBtn}></InfoCard>)
+      } else {
+        return (<InfoCard info={rso.name} button1={joinRsoBtn}></InfoCard>)
+      }
+      }
     )
 
-    const requestRSO = <Button variant="primary">Request RSO</Button>
+    const requestRSO = <Button variant="primary" className="request-btn">REQUEST RSO</Button>
 
     return (
       <Container fluid={true} className="px-0 page">

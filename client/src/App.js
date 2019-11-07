@@ -20,7 +20,7 @@ function App() {
       <Route path="/rsoApprovals" exact component={RSOApprovals} />
       <Route path="/requestEvent" exact component={RequestEvent} />
       <Route path="/requestRSO" exact component={RequestRSO} />
-      <Route path="/event" exact component={Event} />
+      <Route path="/event/:eventId" exact component={Event} />
     </div>
   );
 }

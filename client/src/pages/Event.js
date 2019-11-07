@@ -9,12 +9,15 @@ import "../styles/Page.css";
 
 class Event extends React.Component {
   state = {
-    comments: [{email: "scastrolopez@knights.ucf.edu", text: "I'm excited to join :)", timestamp: "9/22/2019 5:00pm"}, {email: "bob@knights.ucf.edu", text: "Are meetings always at 5:00pm?", timestamp: "9/24/2019 10:00am"}],
+    comments: [{email: "scastrolopez@knights.ucf.edu", text: "I'm excited to join :)", timestamp: "9/22/2019 5:00pm"}, {email: "bob@knights.ucf.edu", text: "Are meetings always at 5:00pm?", timestamp: "9/24/2019 10:00am"},
+                {email: "scastrolopez@knights.ucf.edu", text: "I'm excited to join :)", timestamp: "9/22/2019 5:00pm"}, {email: "bob@knights.ucf.edu", text: "Are meetings always at 5:00pm?", timestamp: "9/24/2019 10:00am"},
+                {email: "scastrolopez@knights.ucf.edu", text: "I'm excited to join :)", timestamp: "9/22/2019 5:00pm"}, {email: "bob@knights.ucf.edu", text: "Are meetings always at 5:00pm?", timestamp: "9/24/2019 10:00am"}],
     details: {}
   }
 
   getDetails = () => {
     this.setState({details: {
+      name: "UCF HACKS First Meeting",
       date: "9/22/2019",
       start: "5:00pm",
       end: "6:00pm",
@@ -35,8 +38,6 @@ class Event extends React.Component {
       <InfoCard info={comment.email + ": " + comment.text + " - " + comment.timestamp}></InfoCard>
     )
 
-    const requestEvent = <Button variant="primary">Event Details</Button>
-
     const rating = <p>*****</p>;
 
     const details = 
@@ -54,7 +55,7 @@ class Event extends React.Component {
         <NavMenu />
         <Row>
           <Col>
-            <EventCard title="Event Details" details={details} rating={rating} comments={comments}/>
+            <EventCard title={this.state.details.name} details={details} rating={rating} comments={comments}/>
           </Col>
         </Row>
       </Container>
