@@ -249,17 +249,15 @@ router.get('/getunapprovedpub/:id', (req, res) => {
 
   const id = req.params.id;
 
-  let sql = "SELECT event_id FROM public_events WHERE approved = 0";
+  let sql = "SELECT * FROM events LEFT JOIN public_events ON events.event_id = public_events.event_id WHERE (public_events.approved = 0 AND events.university_id = ?)";
 
   pool.query(sql, id, (err, results) => {
     if(err) throw err;
-
-    let sql2 = ""
     res.send(results);
-    console.log("unapproved events returned");
+    console.log("unapproved public events returned");
   });
 
-})
+});
 
 // approve public by id
 router.post('/approvepublic/:id', (req, res) => {
@@ -290,6 +288,21 @@ router.post('/approveprivate/:id', (req, res) => {
     res.send(results);
     console.log("event approved");
 
+  });
+
+});
+
+// get all unapproved private events by uni_id
+router.get('/getunapprovedpriv/:id', (req, res) => {
+
+  const id = req.params.id;
+
+  let sql = "SELECT * FROM events LEFT JOIN private_events ON events.event_id = private_events.event_id WHERE (private_events.approved = 0 AND events.university_id = ?)";
+
+  pool.query(sql, id, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log("unapproved public events returned");
   });
 
 });
