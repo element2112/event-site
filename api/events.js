@@ -245,14 +245,16 @@ router.get('/getrsoevents/:id', (req, res) => {
 // APPROVE EVENTS
 
 // get unapproved by uni_id
-router.get('/getunapproved/:id', (req, res) => {
+router.get('/getunapprovedpub/:id', (req, res) => {
 
   const id = req.params.id;
 
-  let sql = "SELECT * FROM events WHERE EXISTS (SELECT event_id )";
+  let sql = "SELECT event_id FROM public_events WHERE approved = 0";
 
   pool.query(sql, id, (err, results) => {
     if(err) throw err;
+
+    let sql2 = ""
     res.send(results);
     console.log("unapproved events returned");
   });
