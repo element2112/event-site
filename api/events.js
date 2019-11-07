@@ -26,31 +26,12 @@ router.get('/getevents', (req, res) => {
   })  
 });
 
-router.post('/addevent', (req, res) => {
-    
-  const fields = {
-      event_id: req.body.event_id,
-      name: req.body.name,
-      description: req.body.description,
-      category: req.body.category,
-      contact_phone: req.body.contact_phone,
-      contact_email: req.body.contact_email,
-      start_time: req.body.start_time,
-      end_time: req.body.end_time,
-      location_id: req.body.location_id,
-      university_id: req.body.university_id
-  }
-
-  let sql = "INSERT INTO events SET ?";
-
-  pool.query(sql, fields, (err, results) => {
-    if(err) throw err;
-    res.send(results);
-    console.log('1 event added');
-  });
-
-});
-
+/**
+ * @route	delete  api/events
+ * @desc	Get all events
+ * @access	public
+ * 
+*/
 router.delete('/deleteevent/:id', (req, res) => {
   
   const id = req.params.id;
@@ -67,235 +48,249 @@ router.delete('/deleteevent/:id', (req, res) => {
 
 /* --------------------------------------------------- */
 
-// // PUBLIC EVENTS
+// PUBLIC EVENTS
 
-// /**
-//  * @route	GET  api/events/publicevents
-//  * @desc	Get all public events
-//  * @access	public
-// */
-// router.get('/getpublic', (req, res) => {
-//     let sql = 'SELECT * from public_events';
+/**
+ * @route	GET  api/events/publicevents
+ * @desc	Get a public events
+ * @access	public
+*/
+router.get('/getpublic/:approved', (req, res) => {
   
-//     pool.query(sql, (err, results) => {
-//       if(err) throw err;
-//       res.send(results);
-//       console.log('all public events returned')
-//     })  
-// });
-
-// /**
-//  * @route	GET  api/events/publicevents
-//  * @desc	Get a public events
-//  * @access	public
-// */
-// router.get('/getpublic/:id', (req, res) => {
+  const approved = req.params.approved;
   
-//   var id = req.params.id;
+  let sql = 'SELECT * from public_events WHERE approved = ?';
+
+  pool.query(sql, approved, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('approved or unapproved results returned');
+  })
   
-//   let sql = 'SELECT * from public_events WHERE event = ?';
+});
 
-//   pool.query(sql, id, (err, results) => {
-//     if(err) throw err;
-//     res.send(results);
-//     console.log('all public events returned')
-//   })
+/**
+ * @route	POST api/events/publicevents
+ * @desc	Add a public event
+ * @access	public
+*/
+router.post('/addpublic', (req, res) => {
   
-// });
+  const event = {
+    name: req.body.name,
+    description: req.body.description,
+    category: req.body.category,
+    contact_phone: req.body.contact_phone,
+    contact_email: req.body.contact_email,
+    start_time: req.body.start_time,
+    end_time: req.body.end_time,
+    location_id: req.body.location_id,
+    university_id: req.body.university_id
+  }
 
+  let sql = "INSERT INTO events SET ?";
 
+  pool.query(sql, event, (err, results) => {
+    
+    if(err) throw err;
 
-// /**
-//  * @route	POST api/events/publicevents
-//  * @desc	Add a public event
-//  * @access	public
-// */
-// router.post('/addpublic', (req, res) => {
+    const public = {
+      event_id: results.insertId,
+      approved: 0
+    }
+
+    let sql2 = "INSERT INTO public_events SET ?"
+    pool.query(sql2, public, (err, results) => {
+      if(err) throw err;
+      res.send(results);
+      console.log("1 public event added");
+    });
+
+  });
+
+});
+
+router.delete('/deletepublic/:id', (req, res) => {
   
-//   var fields = {
-//     event: req.body.events,
-//     approver: req.body.approver,
-//     approved: req.body.approved
-//   }
+  const id = req.params.id;
 
-//   let sql = "INSERT INTO public_events SET ?";
+  let sql = "DELETE FROM events WHERE event_id = ?"
 
-//   pool.query(sql, fields, (err, results) => {
-//     if(err) throw err;
-//     res.send(results);
-//   })  
-// });
+  pool.query(sql, id, (err, results) => {
+    if(err) throw err;
 
-// /**
-//  * @route	DELETE api/events/publicevents
-//  * @desc	Delete a public event
-//  * @access	public
-// */
-// router.delete('/deletepublic/:id', (req, res) => {
+    let sql2 = "DELETE FROM public_events WHERE event_id = ?"
+    pool.query(sql2, id, (err, results) => {
+      if (err) throw err;
+      res.send(results);
+      console.log("event deleted. public event deleted.");
+    })
+    
+  });
 
-//   var id = req.params.id;
-
-//   let sql = "DELETE FROM public_events WHERE event = ?";
-
-//   pool.query(sql, id, (err, results) => {
-//     if(err) throw err;
-//     res.send(results);
-//   })  
-// });
+});
 
 // /* --------------------------------------------------- */
 
 // // PRIVATE EVENTS
 
-// /**
-//  * @route	GET  api/events/privateevents
-//  * @desc	Get all public events
-//  * @access	public
-// */
-// router.get('/getprivate', (req, res) => {
-//   let sql = 'SELECT * from private_events';
 
-//   pool.query(sql, (err, results) => {
-//     if(err) throw err;
-//     res.send(results);
-//     console.log('all private events returned')
-//   })  
-// });
-
-// /**
-//  * @route	GET  api/events/privateevents
-//  * @desc	Get all public events
-//  * @access	public
-// */
-// router.get('/getprivate/:id', (req, res) => {
-
-//   var id = req.params.id;
-
-//   let sql = 'SELECT * FROM private_events WHERE events_id = ?';
-
-//   pool.query(sql, id, (err, results) => {
-//     if(err) throw err;
-//     res.send(results);
-//     console.log('all private events returned')
-//   })  
-// });
-
-
-// /**
-// * @route	POST api/events/privateevents
-// * @desc	Add a private event
-// * @access	public
-// */
-// router.post('/addprivate', (req, res) => {
+router.get('/getprivate/:id', (req, res) => {
   
-//   var fields = {
-//     events_id: req.body.events_id,
-//     approver_id: req.body.approver_id,
-//     approved: req.body.approved
-//   }
+  const id = req.params.id;
   
-//   let sql = "INSERT INTO private_events WHERE events_id = ?";
+  let sql = 'SELECT * from private_events WHERE uni_id = ? AND approved = 1';
 
-//   pool.query(sql, fields, (err, results) => {
-//     if(err) throw err;
-//     res.send(results);
-//   });
-
-// });
-
-// /**
-// * @route	DELETE api/events/privateevents
-// * @desc	Delete a private event
-// * @access	public
-// */
-// router.delete('/deleteprivate/:id', (req, res) => {
+  pool.query(sql, id, approved, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('approved or unapproved results returned');
+  })
   
-//   var id = req.params.id;
+});
+
+/**
+* @route	POST api/events/privateevents
+* @desc	Add a private event
+* @access	public
+*/
+router.post('/addprivate', (req, res) => {
   
-//   let sql = "DELETE FROM private_events WHERE events_id = ?";
+  const event = {
+    name: req.body.name,
+    description: req.body.description,
+    category: req.body.category,
+    contact_phone: req.body.contact_phone,
+    contact_email: req.body.contact_email,
+    start_time: req.body.start_time,
+    end_time: req.body.end_time,
+    location_id: req.body.location_id,
+    university_id: req.body.university_id
+  }
 
-//   pool.query(sql, id, (err, results) => {
-//     if(err) throw err;
-//     res.send(results);
-//   })  
-// });
+  let sql = "INSERT INTO events SET ?";
 
+  pool.query(sql, event, (err, results) => {
+    
+    if(err) throw err;
 
-// /* --------------------------------------------------- */
+    const private = {
+      event_id: results.insertId,
+      approved: 0
+    }
 
-// // RSO EVENT
+    let sql2 = "INSERT INTO private_events SET ?"
+    pool.query(sql2, private, (err, results) => {
+      if(err) throw err;
+      res.send(results);
+      console.log("1 private event added");
+    });
 
-// /**
-//  * @route	GET  api/events/rsoevents
-//  * @desc	Get all rso events
-//  * @access	public
-// */
-// router.get('/getrsoevents', (req, res) => {
-//   let sql = 'SELECT * from rso_event';
+  });
 
-//   pool.query(sql, (err, results) => {
-//     if(err) throw err;
-//     res.send(results);
-//     console.log('all rso events returned')
-//   })  
-// });
+});
 
-// /**
-//  * @route	GET  api/events/rsoevents
-//  * @desc	Get all rso events
-//  * @access	public
-// */
-// router.get('/getrsoevents/:id', (req, res) => {
+/**
+* @route	DELETE api/events/privateevents
+* @desc	Delete a private event
+* @access	public
+*/
+router.delete('/deleteprivate/:id', (req, res) => {
   
-//   var id = req.params.id;
+  const id = req.params.id;
+
+  let sql = "DELETE FROM events WHERE event_id = ?"
+
+  pool.query(sql, id, (err, results) => {
+    if(err) throw err;
+
+    let sql2 = "DELETE FROM private_events WHERE event_id = ?"
+    pool.query(sql2, id, (err, results) => {
+      if (err) throw err;
+      res.send(results);
+      console.log("event deleted. private event deleted.");
+    })
+    
+  });
+
+});
+
+
+/* --------------------------------------------------- */
+
+// RSO EVENT
+
+/**
+ * @route	GET  api/events/rsoevents
+ * @desc	Get all rso events
+ * @access	public
+*/
+// the id passed is user id
+router.get('/getrsoevents/:id', (req, res) => {
   
-//   let sql = 'SELECT * from rso_event WHERE rso_org = ?';
+  const id = req.params.id;
 
-//   pool.query(sql, id, (err, results) => {
-//     if(err) throw err;
-//     res.send(results);
-//     console.log('all rso events returned')
-//   });
+  let sql = 'SELECT * FROM events WHERE event_id IN (SELECT event_id FROM rso_members WHERE user_id = ?)';
 
-// });
-
-
-// /**
-// * @route	POST api/events/rsoevents
-// * @desc	Add a rso event
-// * @access	public
-// */
-// router.post('/addrsoevents', (req, res) => {
+  pool.query(sql, id, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('rso event returned');
+  })
   
-//   var fields = {
-//     rso_org: req.body.rso_org,
-//     rso_event_id: req.body.rso_event_id
-//   }
-  
-//   let sql = "INSERT INTO rso_event SET ?";
+});
 
-//   pool.query(sql, fields, (err, results) => {
-//     if(err) throw err;
-//     res.send(results);
-//   }); 
-// });
 
-// /**
-// * @route	DELETE api/events/rsoevents
-// * @desc	Delete a rso event
-// * @access	public
-// */
-// router.delete('/deletersoevents/:id', (req, res) => {
+/**************************************************************************/
+// APPROVE EVENTS
 
-//   var id = req.params.id;
+// get unapproved by uni_id
+router.get('/getunapproved/:id', (req, res) => {
 
-//   let sql = 'DELETE FROM rso_event WHERE rso_event_id = ?';
+  const id = req.params.id;
 
-//   pool.query(sql, id, (err, results) => {
-//     if(err) throw err;
-//     res.send(results);
-//   });
-// });
+  let sql = "SELECT * FROM events WHERE EXISTS (SELECT event_id )";
+
+  pool.query(sql, id, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log("unapproved events returned");
+  });
+
+})
+
+// approve public by id
+router.post('/approvepublic/:id', (req, res) => {
+
+  const id = req.params.id;
+
+  let sql = "UPDATE public_events SET approved = 1 WHERE event_id = ?"
+
+  pool.query(sql, id, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log("event approved");
+
+  });
+
+
+});
+
+// approve private by event id
+router.post('/approveprivate/:id', (req, res) => {
+
+  const id = req.params.id;
+
+  let sql = "UPDATE private_events SET approved = 1 WHERE event_id = ?"
+
+  pool.query(sql, id, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log("event approved");
+
+  });
+
+});
 
 
 
