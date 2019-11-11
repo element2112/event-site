@@ -61,8 +61,6 @@ router.post('/registeruni', (req, res) => {
   pool.query(sql, uni, (err, results) => {
     if(err) throw err;
 
-    console.log(results.insertId);
-
     const user = {
       first_name: req.body.first_name,
       last_name: req.body.last_name,
@@ -86,7 +84,7 @@ router.post('/registeruni', (req, res) => {
 
       pool.query(sql3, superA, (err, results) => {
         if (err) throw err;
-        res.send(results);
+        res.send(superA);
         console.log("1 university added. 1 user added. 1 superadmin added.");
       });
 

@@ -54,6 +54,24 @@ router.get('/getusers/login/:id', (req, res) => {
 
 });
 
+/**
+ * @route	GET  api/users/getSuperAdmins
+ * @desc	Get all superadmins
+ * @access	public
+*/
+router.get('/superadmins/:id', (req, res) => {
+  const id = req.params.id;
+
+  let sql = 'SELECT * from super_admins WHERE user_id = ' + id;
+
+  pool.query(sql, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log("all records received");
+  })
+
+});
+
 
 /**
  * @route	POST  api/users/registeruser
@@ -75,7 +93,7 @@ router.post('/registeruser', (req, res) => {
 
   pool.query(sql, fields, (err, results) => {
     if(err) throw err;
-    res.send(results);
+    res.send({user_id: results.insertId, uni_id: req.body.uni_id});
     console.log("1 user added");
   });
 

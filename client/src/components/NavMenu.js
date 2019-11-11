@@ -3,10 +3,14 @@ import "../styles/App.css";
 import "../styles/NavMenu.css";
 import {Navbar, Nav, Container} from "react-bootstrap";
 
+const headers = {
+  "Content-Type": "application/json",
+}
 
 class NavMenu extends React.Component {
   state = {
-    isSuperAdmin: false
+    isSuperAdmin: false,
+    userId: localStorage.getItem("user_id")
   }
 
   componentDidMount() {
@@ -15,7 +19,24 @@ class NavMenu extends React.Component {
   }
 
   checkIfSuperAdmin = () => {
-    this.setState({isSuperAdmin: true});
+    fetch("http://localhost:4000/api/users/superadmins/" + this.state.userId, {
+        method: "GET",
+        headers: headers,
+    })
+        .then((res) => res.json())
+        .then((res) => {
+            if (res[0].user_id != undefined) {
+              this.setState({isSuperAdmin: true});
+            } else throw res
+        })
+        .catch((res) => {
+            console.log(res);
+        })
+  }
+
+  logout = () => {
+    localStorage.removeItem("user_id")
+    localStorage.removeItem("uni_id");
   }
 
   render() {
@@ -31,14 +52,14 @@ class NavMenu extends React.Component {
               <Nav.Link href="/rsos">RSOs</Nav.Link>
               <Nav.Link href="/eventApprovals">Event Approvals</Nav.Link>
               <Nav.Link href="/rsoApprovals">RSO Approvals</Nav.Link>
-              <Nav.Link href="/">Logout</Nav.Link>
+              <Nav.Link href="/" onClick={() => this.logout()}>Logout</Nav.Link>
             </Nav>
           </Navbar.Collapse> : 
           <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
             <Nav>
-              <Nav.Link href="#home">Events</Nav.Link>
-              <Nav.Link href="#link">RSOs</Nav.Link>
-              <Nav.Link href="#link">Logout</Nav.Link>
+              <Nav.Link href="/events">Events</Nav.Link>
+              <Nav.Link href="/rsos">RSOs</Nav.Link>
+              <Nav.Link href="/" onClick={() => this.logout()}>Logout</Nav.Link>
             </Nav>
           </Navbar.Collapse>
           }

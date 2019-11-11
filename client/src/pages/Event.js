@@ -7,12 +7,21 @@ import EventCard from "../components/EventCard";
 import InfoCard from "../components/InfoCard";
 import "../styles/Page.css";
 
+const headers = {
+  "Content-Type": "application/json",
+}
+
 class Event extends React.Component {
   state = {
     comments: [{email: "scastrolopez@knights.ucf.edu", text: "I'm excited to join :)", timestamp: "9/22/2019 5:00pm"}, {email: "bob@knights.ucf.edu", text: "Are meetings always at 5:00pm?", timestamp: "9/24/2019 10:00am"},
                 {email: "scastrolopez@knights.ucf.edu", text: "I'm excited to join :)", timestamp: "9/22/2019 5:00pm"}, {email: "bob@knights.ucf.edu", text: "Are meetings always at 5:00pm?", timestamp: "9/24/2019 10:00am"},
                 {email: "scastrolopez@knights.ucf.edu", text: "I'm excited to join :)", timestamp: "9/22/2019 5:00pm"}, {email: "bob@knights.ucf.edu", text: "Are meetings always at 5:00pm?", timestamp: "9/24/2019 10:00am"}],
-    details: {}
+    details: {},
+    eventId: this.props.location.pathname.split("/event/")[1]
+  }
+
+  componentDidMount() {
+    this.getInfo();
   }
 
   getDetails = () => {
@@ -29,10 +38,40 @@ class Event extends React.Component {
     }})
   }
 
-  componentDidMount() {
-    this.getDetails();
+  getInfo = () => {
+    fetch("http://localhost:4000/api/events/getevent/" + this.state.eventId, {
+        method: "GET",
+        headers: headers
+    })
+        .then((res) => res.json())
+        .then((res) => {
+            if (res) {
+              res = res[0];
+              
+              this.setState({details: {
+                name: res.name,
+                start: this.getDateAndTime(res.start_time),
+                end: this.getTime(res.end_time),
+                category: res.category,
+                description: res.description,
+                contactPhone: res.contact_phone,
+                contactEmail: res.contact_email
+              }})
+            } else throw res
+        })
+        .catch((res) => console.log(res))
   }
 
+  //------------------ helpers ----------------------//
+  getDateAndTime = (datetime) => {
+    return datetime.split("GMT")[0]
+  }
+
+  getTime = (datetime) => {
+    return datetime.slice(10)
+  }
+
+  //------------------ Render ----------------------//
   render () {
     const comments = this.state.comments.map((comment, key) => 
       <InfoCard info={comment.email + ": " + comment.text + " - " + comment.timestamp}></InfoCard>
@@ -41,13 +80,13 @@ class Event extends React.Component {
     const rating = <p>*****</p>;
 
     const details = 
-      <div><p>
-        {this.state.details.date}, {this.state.details.start} - {this.state.details.end} </p>
-        <p>{this.state.details.access}</p>
-        <p>{this.state.details.category}</p>
-        <p>{this.state.details.description}</p>
-        <p>{this.state.details.contactPhone}</p>
-        <p>{this.state.details.contactEmail}</p>
+      <div>
+        <p><b>{this.state.details.start} - {this.state.details.end}</b> </p>
+        <p><b>Access: </b>{this.state.details.access}</p>
+        <p><b>Category: </b>{this.state.details.category}</p>
+        <p><b>Description: </b>{this.state.details.description}</p>
+        <p><b>Contact Phone Number: </b>{this.state.details.contactPhone}</p>
+        <p><b>Contact Email: </b>{this.state.details.contactEmail}</p>
       </div>
     
     return (
