@@ -21,6 +21,22 @@ router.get("/getevents", (req, res) => {
 });
 
 /**
+ * @route	GET  api/events
+ * @desc	Get all events
+ * @access	public
+ *
+ */
+router.get("/getevent/:id", (req, res) => {
+  let sql = "SELECT * from events WHERE event_id = " + req.params.id;
+
+  pool.query(sql, (err, results) => {
+    if (err) throw err;
+    res.send(results);
+    console.log("all events returned");
+  });
+});
+
+/**
  * @route	delete  api/events
  * @desc	delete one event
  * @access	public
@@ -44,18 +60,16 @@ router.delete("/deleteevent/:id", (req, res) => {
 
 /**
  * @route	GET  api/events/getpublic
- * @desc	Get all approved or unapproved public events
+ * @desc	Get all approved events
  * @access	public
  */
-router.get("/getpublic/:approved", (req, res) => {
-  const approved = req.params.approved;
+router.get("/getapprovedpub", (req, res) => {
 
-  let sql = "SELECT * from public_events WHERE approved = ?";
-
-  pool.query(sql, approved, (err, results) => {
+let sql = "SELECT * FROM events LEFT JOIN public_events ON events.event_id = public_events.event_id WHERE (public_events.approved = 1)";
+  pool.query(sql, (err, results) => {
     if (err) throw err;
     res.send(results);
-    console.log("approved or unapproved results returned");
+    console.log("approved public events returned");
   });
 });
 
@@ -77,23 +91,42 @@ router.post("/addpublic", (req, res) => {
     university_id: req.body.university_id
   };
 
-  let sql = "INSERT INTO events SET ?";
+  let loc_sql = "SELECT * from events WHERE location_id = " + req.body.location_id;
 
-  pool.query(sql, event, (err, results) => {
+  pool.query(loc_sql, (err, results) => {
     if (err) throw err;
+    let notOverlapping = true;
 
-    const public = {
-      event_id: results.insertId,
-      approved: 0
-    };
+    results.forEach((re) => {
+      if(((new Date(re.end_time ) - (new Date(req.body.start_time))) > 0) && ((new Date(req.body.end_time)) - new Date(re.start_time)) > 0) {
+        notOverlapping = false;
+      } 
+    })
+    
+    if(notOverlapping) {
+      let sql = "INSERT INTO events SET ?";
 
-    let sql2 = "INSERT INTO public_events SET ?";
-    pool.query(sql2, public, (err, results) => {
-      if (err) throw err;
-      res.send(results);
-      console.log("1 public event added");
-    });
+      pool.query(sql, event, (err, results) => {
+        if (err) throw err;
+    
+        const public = {
+          event_id: results.insertId,
+          approved: 0
+        };
+    
+        let sql2 = "INSERT INTO public_events SET ?";
+        pool.query(sql2, public, (err, results) => {
+          if (err) throw err;
+          res.send(results);
+          console.log("1 public event added");
+        });
+      });
+
+    } else {
+      res.send("Could not add. Time overlaps");
+    }
   });
+
 });
 
 /**
@@ -128,15 +161,15 @@ router.delete("/deletepublic/:id", (req, res) => {
  * @desc	get all approved private events by uni_id
  * @access	public
  */
-router.get("/getprivate/:id", (req, res) => {
+router.get("/getapprovedprivate/:id", (req, res) => {
   const id = req.params.id;
 
-  let sql = "SELECT * from private_events WHERE uni_id = ? AND approved = 1";
+  let sql = "SELECT * FROM private_events LEFT JOIN events ON events.event_id = private_events.event_id WHERE (private_events.approved = 1 AND university_id = ?)";
 
-  pool.query(sql, id, approved, (err, results) => {
+  pool.query(sql, id, (err, results) => {
     if (err) throw err;
-    res.send(results);
-    console.log("approved or unapproved results returned");
+    res.send(results); 
+    console.log("approved results returned");
   });
 });
 
@@ -158,23 +191,41 @@ router.post("/addprivate", (req, res) => {
     university_id: req.body.university_id
   };
 
-  let sql = "INSERT INTO events SET ?";
+  let loc_sql = "SELECT * from events WHERE location_id = " + req.body.location_id;
 
-  pool.query(sql, event, (err, results) => {
+  pool.query(loc_sql, (err, results) => {
     if (err) throw err;
+    let notOverlapping = true;
 
-    const private = {
-      event_id: results.insertId,
-      approved: 0
-    };
+    results.forEach((re) => {
+      if(((new Date(re.end_time ) - (new Date(req.body.start_time))) > 0) && ((new Date(req.body.end_time)) - new Date(re.start_time)) > 0) {
+        notOverlapping = false;
+      } 
+    })
 
-    let sql2 = "INSERT INTO private_events SET ?";
-    pool.query(sql2, private, (err, results) => {
-      if (err) throw err;
-      res.send(results);
-      console.log("1 private event added");
-    });
+    if(notOverlapping) {
+      let sql = "INSERT INTO events SET ?";
+
+      pool.query(sql, event, (err, results) => {
+        if (err) throw err;
+    
+        const private = {
+          event_id: results.insertId,
+          approved: 0
+        };
+    
+        let sql2 = "INSERT INTO private_events SET ?";
+        pool.query(sql2, private, (err, results) => {
+          if (err) throw err;
+          res.send(results);
+          console.log("1 private event added");
+        });
+      });
+    } else {
+      res.send("Could not add. Time overlaps");
+    }
   });
+
 });
 
 /**
@@ -213,7 +264,7 @@ router.get("/getrsoevents/:id", (req, res) => {
   const id = req.params.id;
 
   let sql =
-    "SELECT * FROM events WHERE event_id IN (SELECT event_id FROM rso_members WHERE user_id = ?)";
+    "SELECT * FROM rso_events WHERE event_id IN (SELECT event_id FROM rso_members WHERE user_id = ?)"; // this is getting all rso events
 
   pool.query(sql, id, (err, results) => {
     if (err) throw err;
@@ -266,16 +317,34 @@ router.post("/approveprivate/:id", (req, res) => {
 });
 
 // get all unapproved private events by uni_id
-router.get("/getunapprovedpriv/:id", (req, res) => {
+router.get("/getunapprovedprivate/:id", (req, res) => {
   const id = req.params.id;
 
-  let sql =
-    "SELECT * FROM events LEFT JOIN private_events ON events.event_id = private_events.event_id WHERE (private_events.approved = 0 AND events.university_id = ?)";
+  let sql = "SELECT * FROM private_events LEFT JOIN events ON events.event_id = private_events.event_id WHERE (private_events.approved = 0 AND university_id = ?)";
 
   pool.query(sql, id, (err, results) => {
     if (err) throw err;
     res.send(results);
     console.log("unapproved public events returned");
+  });
+});
+
+router.post("/geteventsbyloc/:id", (req, res) => {
+  const id = req.params.id;
+  const e2 = new Date(req.body.end_time);
+  const s2 = new Date(req.body.start_time);
+  let loc_sql = "SELECT * from events WHERE location_id = " + id;
+
+  pool.query(loc_sql, (err, results) => {
+    if (err) throw err;
+    let c = true;
+
+    results.forEach((re) => {
+      if(((new Date(re.end_time ) - s2) > 0) && (e2 - new Date(re.start_time)) > 0) {
+        c = false;
+      } 
+    })
+    res.send(c);
   });
 });
 

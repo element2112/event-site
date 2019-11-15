@@ -32,15 +32,33 @@ router.get('/getrso', (req, res) => {
 });
 
 /**
- * @route	GET  api/rso/allrso
- * @desc	Get an rsos
+ * @route	GET  api/rso/getrso/:id
+ * @desc	Get all approved rsos by uni_id
  * @access	public
 */
-router.get('/getrso/:id', (req, res) => {
+router.get('/getApprovedRsos/:id', (req, res) => {
   
   var id = req.params.id;
 
-  let sql = 'SELECT * from rsos WHERE rso_id = ?';
+  let sql = 'SELECT * from rsos WHERE uni_id = ? AND approved = 1';
+
+  pool.query(sql, id, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('all rsos returned');
+  })  
+});
+
+/**
+ * @route	GET  api/rso/getrso/:id
+ * @desc	Get all unapproved rsos by uni_id
+ * @access	public
+*/
+router.get('/getUnapprovedRsos/:id', (req, res) => {
+  
+  var id = req.params.id;
+
+  let sql = 'SELECT * from rsos WHERE uni_id = ? AND approved = 0';
 
   pool.query(sql, id, (err, results) => {
     if(err) throw err;
@@ -57,9 +75,8 @@ router.get('/getrso/:id', (req, res) => {
 router.post('/addrso', (req, res) => {
 
   var fields = {
-    rso_id: req.body.rso_id,
-    approved: req.body.approved,
-    active: req.body.active,
+    approved: 0,
+    active: 1,
     name: req.body.name,
     uni_id: req.body.uni_id
   }

@@ -53,7 +53,7 @@ router.post('/addlocation', (req, res) => {
 
   pool.query(sql, fields, (err, results) => {
     if(err) throw err;
-    res.send(results);
+    res.json({loc_id: results.insertId});
     console.log('1 location added');
   });
   
