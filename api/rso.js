@@ -43,11 +43,24 @@ router.get('/getrso', (req, res) => {
 
 });
 
+// get rso by user id
+router.get('/getrso/:user_id', async (req, res) => {
+  const user_id = req.params.user_id;
+  const sql = 'SELECT * from rso_members WHERE user_id = ?';
+
+  const sql2= 'SELECT * from rsos WHERE rso_id = ?'
+
+  const user = await record.getStuff(user_id,sql)
+  const rsos = await record.getStuff(user.rso_id,sql2)
+  res.json(rsos)
+});
+
 
 // get rso by rso_member id
 router.get('/getrso/:user_id', (req, res) => {
   const { user_id } = req.params
   const sql = 'SELECT * from rso_members WHERE user_id = ?';
+
 
   pool.query(sql, user_id, (err, results) => {
     if (err) throw err;
