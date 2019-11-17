@@ -126,10 +126,24 @@ router.post('/addrso', asyncHandler(async (req, res) => {
 
   const createRso = await record.createRso(fields);
   const getRso = await record.getRso(fields.name);
-  // await pool.query()
+  // await rso_members.forEach(async(member, index, array) => {
+  //     console.log(member)
+  //     const temp = await record.getUsers(member);
+      
+  // });
+
+
+  // console.dir(rso_members[0])
+  // const addAdmin = await record.addRsoAdmin(rso_members[0])
+  // const rsoUsers = []
+  // rso_members.forEach(async member => {
+  //   rsoUsers.push(await record.getUsers(member))
+  // })
+
+  // console.dir(rsoUsers)
   res.send('boom')
   }))
-  
+    
 // })
 
 /**
