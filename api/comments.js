@@ -27,6 +27,17 @@ router.get('/getcomments', (req, res) => {
     
   });
 
+// get comment by id
+router.get('/getcomments/:comment_id', (req, res) => {
+  const { comment_id } = req.params;
+  const sql = 'SELECT * from comments WHERE comment_id = ?'
+
+  pool.query(sql , comment_id, (err, results) => {
+    if(err) throw err
+    res.json(results)
+  })
+})
+
 /**
  * @route	POST  api/comments/postcomment
  * @desc	add a comment

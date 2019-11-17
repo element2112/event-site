@@ -10,7 +10,7 @@ database=dbname
 
 */
 
-// console.log(process.env.user);
+//console.dir(process.env);
 
 const pool = mysql.createPool({
   host: process.env.host,
@@ -20,5 +20,7 @@ const pool = mysql.createPool({
   connectionLimit: process.env.connectionLimit,
   dateStrings: true
 });
+
+//console.dir(process.env);
 
 module.exports = pool;
