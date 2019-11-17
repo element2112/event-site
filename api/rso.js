@@ -44,8 +44,8 @@ router.get('/getrso', (req, res) => {
 });
 
 
-// get rso by rso_member id
-router.get('/getrso/:user_id', (req, res) => {
+// get rsos by rso_member id
+router.get('/getrsosforuser/:user_id', (req, res) => {
   const { user_id } = req.params
   const sql = 'SELECT * from rso_members WHERE user_id = ?';
 
@@ -68,8 +68,6 @@ router.post("/approverso/:id", (req, res) => {
     console.log("rso approved");
   });
 });
-
-
 
 
 /**

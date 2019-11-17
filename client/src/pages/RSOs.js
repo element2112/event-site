@@ -18,6 +18,7 @@ class RSOs extends React.Component {
 
   componentDidMount() {
     this.getRsos();
+    this.getMemberRsos();
   }
 
   //------------------ API calls ----------------------//
@@ -34,6 +35,25 @@ class RSOs extends React.Component {
                 rsos.push({name: rso.name, id: rso.rso_id})
               });
               this.setState({rsos: rsos});
+              console.log(res);
+            } else throw res
+        })
+        .catch((res) => console.log(res))
+  }
+
+  getMemberRsos = () => {
+    fetch("http://localhost:4000/api/rso/getrsosforuser/" + localStorage.getItem("user_id"), {
+        method: "GET",
+        headers: headers
+    })
+        .then((res) => res.json())
+        .then((res) => {
+            if (res) {
+              const rsos = [];
+              res.forEach(rso => {
+                rsos.push(rso.rso_id)
+              });
+              this.setState({memberRSOs: rsos});
               console.log(res);
             } else throw res
         })

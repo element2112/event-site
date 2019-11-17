@@ -105,6 +105,28 @@ class HomeCard extends React.Component {
         .catch((res) => console.log(res))
   }
 
+  login = (e) => {
+    e.preventDefault();
+
+    fetch("http://localhost:4000/api/users/login", {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({
+            email: this.state.email,
+            password: this.state.password1
+        })
+    })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res[0].user_id != undefined) {
+            this.setState({authenticated: true});
+            localStorage.setItem("user_id", res[0].user_id);
+            localStorage.setItem("uni_id", res[0].uni_id);
+          } else throw res
+        })
+        .catch((res) => console.log(res))
+  }
+
   getUnis = () => {
     fetch("http://localhost:4000/api/university/getunis", {
         method: "GET",
@@ -145,12 +167,12 @@ class HomeCard extends React.Component {
               <Card className="home-card">
                 <Card.Header as="h2" className="home-card-color text-center" id="home-card-header">LOGIN</Card.Header>
                 <Card.Body className="home-card-color">
-                  <Form onSubmit={this.onLogin}>
+                  <Form onSubmit={this.login}>
                     <Form.Group controlId="form-basic-email">
-                      <Form.Control type="email" placeholder="Email" className="home-input" name="email"></Form.Control>
+                      <Form.Control type="email" placeholder="Email" className="home-input" name="email" name="email" onChange={this.onChange}></Form.Control>
                     </Form.Group>
                     <Form.Group controlId="form-basic-password">
-                      <Form.Control type="password" placeholder="Password" className="home-input" name="password1"></Form.Control>
+                      <Form.Control type="password" placeholder="Password" className="home-input" name="password1" name="password1" onChange={this.onChange}></Form.Control>
                     </Form.Group>
                     <Button size="lg" block className="home-button home-input" type="submit">
                       LOGIN
