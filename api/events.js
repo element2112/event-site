@@ -275,29 +275,21 @@ router.get("/getrsoevents/:id", (req, res) => {
 
 
 
-router.post("/addrsoevents", (req, res) => {
-  let rso_id = null;
-  const rso_name = req.body.rso_name 
+router.post("/addrso", (req, res) => {
+  const rso_id = req.body.rso_id;
   const event = {
-    name,
-    description,
-    category,
-    contact_phone,
-    contact_email,
-    start_time,
-    end_time,
-    location_id,
-    university_id
-  } = req.body;
+    name: req.body.name,
+    description: req.body.description,
+    category: req.body.category,
+    contact_phone: req.body.contact_phone,
+    contact_email: req.body.contact_email,
+    start_time: req.body.start_time,
+    end_time: req.body.end_time,
+    location_id: req.body.location_id,
+    university_id: req.body.university_id
+  };
 
-
-  const rso_sql = "SELECT rso_id from rsos WHERE name = ?";
   const loc_sql = "SELECT * from events WHERE location_id = ?";
-
-  pool.query(rso_sql, rso_name, (err, results) => {
-    if(err) throw err;
-    rso_id = results;
-  })
 
   pool.query(loc_sql, event.location_id, (err, results) => {
     if (err) throw err;
