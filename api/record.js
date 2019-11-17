@@ -137,6 +137,32 @@ function addEvent(event, sql) {
     });
 }
 
+function addComment(value, sql) {
+    return new Promise((resolve, reject) => {
+        pool.query(sql, value, async (err, results) => {
+            if (err) {
+                reject(err)
+            } else {
+                // console.log(results)
+                resolve(results)
+            }
+        })
+    });
+}
+
+function getAvgRating(event, sql) {
+    return new Promise((resolve, reject) => {
+        pool.query(sql, event, async (err, results) => {
+            if (err) {
+                reject(err)
+            } else {
+                // console.log(results)
+                resolve(results)
+            }
+        })
+    });
+}
+
 function addRsoEvent(event, sql) {
     return new Promise((resolve, reject) => {
         pool.query(sql, event, async (err, results) => {
@@ -180,6 +206,8 @@ module.exports = {
     deleteRso,
     deleteRsoUsers,
     deleteRsoEvents,
-    editComment
+    editComment,
+    addComment,
+    getAvgRating
 
 }
