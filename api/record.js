@@ -31,13 +31,52 @@ function overlapping(location, start_time, end_time) {
     });
 }
 
-function getRso(name) {
+function getInsertedRso() {
     return new Promise((resolve, reject) => {
-        pool.query('SELECT * FROM rsos WHERE name = ?', name, async (err, results) => {
+        pool.query('SELECT * FROM rsos', async (err, results) => {
             if (err) {
                 reject(err)
             } else {
-                // console.log(results)
+                const lastItem = results.pop()
+                resolve(lastItem)
+            }
+        })
+    });
+}
+
+function deleteRso(id) {
+    return new Promise((resolve, reject) => {
+        pool.query('DELETE FROM rsos WHERE rso_id = ?', id, async (err, results) => {
+            if (err) {
+                reject(err)
+            } else {
+                // const lastItem = results.pop()
+                resolve(results)
+            }
+        })
+    });
+}
+
+function deleteRsoUsers(id) {
+    return new Promise((resolve, reject) => {
+        pool.query('DELETE FROM rso_members WHERE rso_id = ?', id, async (err, results) => {
+            if (err) {
+                reject(err)
+            } else {
+                // const lastItem = results.pop()
+                resolve(results)
+            }
+        })
+    });
+}
+
+function deleteRsoEvents(id) {
+    return new Promise((resolve, reject) => {
+        pool.query('DELETE FROM rso_event WHERE rso_id = ?', id, async (err, results) => {
+            if (err) {
+                reject(err)
+            } else {
+                // const lastItem = results.pop()
                 resolve(results)
             }
         })
@@ -117,11 +156,15 @@ function addRsoAdmin(admin) {
 
 module.exports = {
     createRso,
-    getRso,
+    getInsertedRso,
     addRsoAdmin,
     overlapping,
     getStuff,
     getLocation,
     addEvent,
-    addRsoEvent
+    addRsoEvent,
+    deleteRso,
+    deleteRsoUsers,
+    deleteRsoEvents
+
 }

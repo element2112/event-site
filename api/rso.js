@@ -55,6 +55,20 @@ router.get('/getrso/:user_id', (req, res) => {
   })
 });
 
+router.post("/reject-rso", async (req, res) => {
+  const {
+    rso_id
+  } = req.body;
+
+  const deleteRso = await record.deleteRso(rso_id);
+  const deleteRsoUsers = await record.deleteRsoUsers(rso_id);
+  const deleteRsoEvents = await record.deleteRsoEvents(rso_id);
+
+  res.json({message:"Everythin about the rso is deleted"})
+})
+
+
+
 
 // approve rso
 router.post("/approverso/:id", (req, res) => {
@@ -125,7 +139,7 @@ router.post('/addrso', asyncHandler(async (req, res) => {
   const rso_members = req.body.rso_members.split(' ')
 
   const createRso = await record.createRso(fields);
-  const getRso = await record.getRso(fields.name);
+  const getInsertedRso = await record.getInsertedRso(fields.name);
   // await rso_members.forEach(async(member, index, array) => {
   //     console.log(member)
   //     const temp = await record.getUsers(member);
