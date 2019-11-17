@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../connection');
+const record = require('./record');
 // const gravatar = require('gravatar');
 // const bcrypt = require('bcryptjs');
 // const { check, validationResult } = require('express-validator/check');
@@ -82,6 +83,16 @@ router.delete('/deletecomment/:id', (req, res) => {
     console.log('1 comment deleted');
   });
 
+});
+
+router.post('/editcomment', async (req, res) => {
+  
+  const values = [req.body.text, req.body.comment_id];
+  
+  let sql = "UPDATE comments SET text = ? WHERE comment_id = ?";
+
+  const editedComment = await record.editComment(values, sql)
+  res.json(editedComment)
 });
   
 module.exports = router;

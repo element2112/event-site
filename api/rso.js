@@ -46,9 +46,9 @@ router.get('/getrso', (req, res) => {
 // get rso by user id
 router.get('/getrso/:user_id', async (req, res) => {
   const user_id = req.params.user_id;
-  const sql = 'SELECT * from rso_members WHERE user_id = ?';
+  const sql = 'SELECT * from rso_members WHERE user_id IN (SELECT user_id FROM rso_members WHERE user_id = ?)';
 
-  const sql2= 'SELECT * from rsos WHERE rso_id = ?'
+  const sql2= 'SELECT * from rsos WHERE rso_id IN (SELECT rso_id FROM rso_members WHERE rso_id = ?)'
 
   const user = await record.getStuff(user_id,sql)
   const rsos = await record.getStuff(user.rso_id,sql2)

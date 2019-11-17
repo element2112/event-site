@@ -97,6 +97,20 @@ function getStuff(name, sql) {
     });
 }
 
+function editComment(values, sql) {
+    return new Promise((resolve, reject) => {
+        pool.query(sql, values, async (err, results) => {
+            if (err) {
+                reject(err)
+            } else {
+                // console.log(results)
+                // const lastItem = results.pop()
+                resolve(results)
+            }
+        })
+    });
+}
+
 function getLocation(location, sql) {
     return new Promise((resolve, reject) => {
         pool.query(sql, location, async (err, results) => {
@@ -165,6 +179,7 @@ module.exports = {
     addRsoEvent,
     deleteRso,
     deleteRsoUsers,
-    deleteRsoEvents
+    deleteRsoEvents,
+    editComment
 
 }
