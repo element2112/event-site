@@ -17,6 +17,18 @@ router.use('/university', uni);
 router.get('/testusers', (req, res,err) => res.json("users Works"));
 
 
+// user login 
+router.post('/login', (req, res) => {
+  const {email, password} = req.body;
+  const sql = `SELECT * from users WHERE email = ? AND password = ?`
+
+  pool.query(sql, [email, password], (err, results) => {
+    if(err) throw err;
+    res.json(results);
+  });
+})
+
+
 /**
  * @route	GET  api/users/login
  * @desc	Get all users (admins/superadmins only)
@@ -117,6 +129,8 @@ router.delete('/deleteuser/:id', (req, res) => {
   });
 
 });
+
+
 
 
 

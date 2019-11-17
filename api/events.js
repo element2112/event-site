@@ -273,6 +273,66 @@ router.get("/getrsoevents/:id", (req, res) => {
   });
 });
 
+
+
+router.post("/addrsoevents", (req, res) => {
+  let rso_id = null;
+  const rso_name = req.body.rso_name 
+  const event = {
+    name,
+    description,
+    category,
+    contact_phone,
+    contact_email,
+    start_time,
+    end_time,
+    location_id,
+    university_id
+  } = req.body;
+
+
+  const rso_sql = "SELECT rso_id from rsos WHERE name = ?";
+  const loc_sql = "SELECT * from events WHERE location_id = ?";
+
+  pool.query(rso_sql, rso_name, (err, results) => {
+    if(err) throw err;
+    rso_id = results;
+  })
+
+  pool.query(loc_sql, event.location_id, (err, results) => {
+    if (err) throw err;
+    let notOverlapping = true;
+
+    results.forEach((re) => {
+      if(((new Date(re.end_time ) - (new Date(req.body.start_time))) > 0) && ((new Date(req.body.end_time)) - new Date(re.start_time)) > 0) {
+        notOverlapping = false;
+      } 
+    })
+
+    if(notOverlapping) {
+      let sql = "INSERT INTO events SET ?";
+
+      pool.query(sql, event, (err, results) => {
+        if (err) throw err;
+    
+        const rso_event = {
+          event_id: results.insertId,
+          rso_id: rso_id
+        };
+    
+        let sql2 = "INSERT INTO rso_event SET ?";
+        pool.query(sql2, rso_event, (err, results) => {
+          if (err) throw err;
+          res.json(results);
+          console.log("1 rso event added");
+        });
+      });
+    } else {
+      res.send("Could not add. Time overlaps");
+    }
+  });
+});
+
 /**************************************************************************/
 // APPROVING EVENTS
 

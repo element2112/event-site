@@ -32,6 +32,21 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
+app.use((req, res, next) => {
+  const err = new Error("Not Found");
+  err.status = 404;
+  next(err);
+});
+
+app.use((err, req, res, next) => {
+  res.status(err.status || 500);
+  res.json({
+      error: {
+          message: err.message
+      }
+  });
+});
+
 app.listen(PORT);
 
 console.log("Server is running on port " + PORT);

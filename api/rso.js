@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const pool = require('../connection');
+const record = require('./record');
 // const gravatar = require('gravatar');
 // const bcrypt = require('bcryptjs');
 // const { check, validationResult } = require('express-validator/check');
@@ -13,7 +14,18 @@ const pool = require('../connection');
  * @access	public
 */
 
-router.get('/testrso', (req, res,err) => res.json("rso Works"));
+function asyncHandler(cb){
+  return async (req,res, next) => {
+      try {
+          await cb(req, res, next);
+      } catch(err) {
+          next(err);
+      }
+  }
+}
+
+
+router.get('/testrso', (req, res, err) => res.json("rso Works"));
 
 /**
  * @route	GET  api/rso/allrso
@@ -24,12 +36,41 @@ router.get('/getrso', (req, res) => {
   let sql = 'SELECT * from rsos';
 
   pool.query(sql, (err, results) => {
-    if(err) throw err;
+    if (err) throw err;
     res.send(results);
     console.log('all rsos returned');
   })
-  
+
 });
+
+
+// get rso by rso_member id
+router.get('/getrso/:user_id', (req, res) => {
+  const { user_id } = req.params
+  const sql = 'SELECT * from rso_members WHERE user_id = ?';
+
+  pool.query(sql, user_id, (err, results) => {
+    if (err) throw err;
+    res.send(results);
+  })
+});
+
+
+// approve rso
+router.post("/approverso/:id", (req, res) => {
+  const { id } = req.params;
+
+  let sql = "UPDATE rsos SET approved = 1 WHERE rso_id = ?";
+
+  pool.query(sql, id, (err, results) => {
+    if (err) throw err;
+    res.send(results);
+    console.log("rso approved");
+  });
+});
+
+
+
 
 /**
  * @route	GET  api/rso/getrso/:id
@@ -37,16 +78,16 @@ router.get('/getrso', (req, res) => {
  * @access	public
 */
 router.get('/getApprovedRsos/:id', (req, res) => {
-  
+
   var id = req.params.id;
 
   let sql = 'SELECT * from rsos WHERE uni_id = ? AND approved = 1';
 
   pool.query(sql, id, (err, results) => {
-    if(err) throw err;
+    if (err) throw err;
     res.send(results);
     console.log('all rsos returned');
-  })  
+  })
 });
 
 /**
@@ -55,16 +96,16 @@ router.get('/getApprovedRsos/:id', (req, res) => {
  * @access	public
 */
 router.get('/getUnapprovedRsos/:id', (req, res) => {
-  
+
   var id = req.params.id;
 
   let sql = 'SELECT * from rsos WHERE uni_id = ? AND approved = 0';
 
   pool.query(sql, id, (err, results) => {
-    if(err) throw err;
+    if (err) throw err;
     res.send(results);
     console.log('all rsos returned');
-  })  
+  })
 });
 
 /**
@@ -72,25 +113,24 @@ router.get('/getUnapprovedRsos/:id', (req, res) => {
 * @desc	add an rso
 * @access	public
 */
-router.post('/addrso', (req, res) => {
+router.post('/addrso', asyncHandler(async (req, res) => {
 
-  var fields = {
+  const fields = {
     approved: 0,
     active: 1,
     name: req.body.name,
     uni_id: req.body.uni_id
   }
 
-  let sql = 'INSERT INTO rsos SET ?';
+  const rso_members = req.body.rso_members.split(' ')
 
-  pool.query(sql, fields, (err, results) => {
-    if(err) throw err;
-    res.send(results);
-    console.log('1 rso added');
-  });
-
-});
-
+  const createRso = await record.createRso(fields);
+  const getRso = await record.getRso(fields.name);
+  // await pool.query()
+  res.send('boom')
+  }))
+  
+// })
 
 /**
 * @route	delete  api/rso/deleterso
@@ -104,11 +144,11 @@ router.delete('/deleterso/:id', (req, res) => {
   let sql = 'DELETE FROM rsos WHERE rso_id = ?';
 
   pool.query(sql, id, (err, results) => {
-    if(err) throw err;
+    if (err) throw err;
     res.send(results);
     console.log('1 rso deleted');
   });
-  
+
 });
-  
+
 module.exports = router;
