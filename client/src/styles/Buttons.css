@@ -43,3 +43,25 @@
   border: none!important;
   color: #9e9e9e!important;
 }
+
+.delete-comment-btn {
+  color: red;
+  margin-left: 10px;
+  font-size: 20px!important;
+}
+
+.delete-comment-btn:hover {
+  color: darkred;
+  cursor: pointer;
+}
+
+.edit-comment-btn {
+  color: green;
+  margin-left: 10px;
+  font-size: 20px;
+}
+
+.edit-comment-btn:hover {
+  color: darkgreen;
+  cursor: pointer;
+}

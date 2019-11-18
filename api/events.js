@@ -124,7 +124,7 @@ router.post("/addpublic", (req, res) => {
       });
 
     } else {
-      res.send("Could not add. Time overlaps");
+      res.json("Could not add. Time overlaps");
     }
   });
 
@@ -223,7 +223,7 @@ router.post("/addprivate", (req, res) => {
         });
       });
     } else {
-      res.send("Could not add. Time overlaps");
+      res.json("Could not add. Time overlaps");
     }
   });
 
@@ -265,46 +265,74 @@ router.get("/getrsoevents/:id", (req, res) => {
   const id = req.params.id;
 
   let sql =
-    "SELECT * FROM rso_events WHERE event_id IN (SELECT event_id FROM rso_members WHERE user_id = ?)"; // this is getting all rso events
+    "select rso_event.event_id from rso_event left join rso_members on rso_members.rso_id = rso_event.rso_id where rso_members.user_id = " + id + " AND event_id IS NOT NULL"
 
   pool.query(sql, id, (err, results) => {
     if (err) throw err;
-    res.send(results);
-    console.log("rso event returned");
+    console.log("rso events returned");
+
+    let sql2 = "select * from events where event_id in (?)"
+
+    pool.query(
+    sql2,
+    [results.map(item => [item.event_id])],
+    (error, results) => {
+      console.log("rso event data returned")
+      res.send(results)
+    }
+  );
+
   });
 });
 
+router.post("/addrso", (req, res) => {
+  const rso_id = req.body.rso_id;
+  const event = {
+    name: req.body.name,
+    description: req.body.description,
+    category: req.body.category,
+    contact_phone: req.body.contact_phone,
+    contact_email: req.body.contact_email,
+    start_time: req.body.start_time,
+    end_time: req.body.end_time,
+    location_id: req.body.location_id,
+    university_id: req.body.university_id
+  };
 
-
-router.post("/addrsoevents", async (req, res) => {
-  const {
-    name,
-    description,
-    category,
-    contact_phone,
-    contact_email,
-    start_time,
-    end_time,
-    location_id,
-    university_id,
-    rso_name
-  } = req.body;
-
-  const event = {name, description, category, location_id, contact_phone, contact_email, start_time, end_time,university_id}
-
-  const sql = "INSERT INTO events SET ?";
-  const sql2 = "INSERT INTO rso_event SET ?";
-  const rso_sql = "SELECT rso_id from rsos WHERE name = ?";
   const loc_sql = "SELECT * from events WHERE location_id = ?";
-  const loc_name_sql = "SELECT * from events WHERE name = ?";
 
-  const getRsoId = await record.getStuff(rso_name,rso_sql);
-  const getLocation = await record.getLocation(location_id, loc_sql)
-  const notOverlapping = await record.overlapping(getLocation,start_time, end_time)
-  const addEvent = await record.addEvent(event, sql)
-  const getEvent = await record.getStuff(event.name, loc_name_sql)
-  const addRsoEvent = await record.addRsoEvent({event_id:getEvent.event_id, rso_id:getRsoId.rso_id}, sql2)
-  res.json(addRsoEvent)
+  pool.query(loc_sql, event.location_id, (err, results) => {
+    if (err) throw err;
+    let notOverlapping = true;
+
+    results.forEach((re) => {
+      if(((new Date(re.end_time ) - (new Date(req.body.start_time))) > 0) && ((new Date(req.body.end_time)) - new Date(re.start_time)) > 0) {
+        notOverlapping = false;
+      } 
+    })
+
+    if(notOverlapping) {
+      let sql = "INSERT INTO events SET ?";
+
+      pool.query(sql, event, (err, results) => {
+        if (err) throw err;
+    
+        const rso_event = {
+          event_id: results.insertId,
+          rso_id: rso_id
+        };
+    
+        let sql2 = "INSERT INTO rso_event SET ?";
+        pool.query(sql2, rso_event, (err, results) => {
+          if (err) throw err;
+          res.json(results);
+          console.log("1 rso event added");
+        });
+      });
+    } else {
+      res.send("Could not add. Time overlaps");
+    }
+  });
 
 });
 
@@ -382,5 +410,20 @@ router.post("/geteventsbyloc/:id", (req, res) => {
     res.send(c);
   });
 });
+
+router.post('/join', (req, res) => {
+  const fields = {
+    rso_id: req.query.rso_id,
+    user_id: req.query.user_id
+  }
+
+  const sql = 'INSERT INTO rso_members SET ?'
+
+  pool.query(sql, fields, (err, results) => {
+    if (err) throw err;
+    res.json("test");
+    console.log('rso joined');
+  });
+})
 
 module.exports = router;
