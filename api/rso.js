@@ -43,17 +43,44 @@ router.get('/getrso', (req, res) => {
 
 });
 
+// get rso by user id
+router.get('/getrso/:user_id', async (req, res) => {
+  const user_id = req.params.user_id;
+  const sql = 'SELECT * from rso_members WHERE user_id IN (SELECT user_id FROM rso_members WHERE user_id = ?)';
+
+  const sql2= 'SELECT * from rsos WHERE rso_id IN (SELECT rso_id FROM rso_members WHERE rso_id = ?)'
+
+  const user = await record.getStuff(user_id,sql)
+  const rsos = await record.getStuff(user.rso_id,sql2)
+  res.json(rsos)
+});
+
 
 // get rso by rso_member id
 router.get('/getrso/:user_id', (req, res) => {
   const { user_id } = req.params
   const sql = 'SELECT * from rso_members WHERE user_id = ?';
 
+
   pool.query(sql, user_id, (err, results) => {
     if (err) throw err;
     res.send(results);
   })
 });
+
+router.post("/reject-rso", async (req, res) => {
+  const {
+    rso_id
+  } = req.body;
+
+  const deleteRso = await record.deleteRso(rso_id);
+  const deleteRsoUsers = await record.deleteRsoUsers(rso_id);
+  const deleteRsoEvents = await record.deleteRsoEvents(rso_id);
+
+  res.json({message:"Everythin about the rso is deleted"})
+})
+
+
 
 
 // approve rso
@@ -125,11 +152,25 @@ router.post('/addrso', asyncHandler(async (req, res) => {
   const rso_members = req.body.rso_members.split(' ')
 
   const createRso = await record.createRso(fields);
-  const getRso = await record.getRso(fields.name);
-  // await pool.query()
+  const getInsertedRso = await record.getInsertedRso(fields.name);
+  // await rso_members.forEach(async(member, index, array) => {
+  //     console.log(member)
+  //     const temp = await record.getUsers(member);
+      
+  // });
+
+
+  // console.dir(rso_members[0])
+  // const addAdmin = await record.addRsoAdmin(rso_members[0])
+  // const rsoUsers = []
+  // rso_members.forEach(async member => {
+  //   rsoUsers.push(await record.getUsers(member))
+  // })
+
+  // console.dir(rsoUsers)
   res.send('boom')
   }))
-  
+    
 // })
 
 /**

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../connection");
+const record = require('./record');
 
 router.get("/testevents", (req, res, err) => res.json("events Works"));
 
@@ -275,10 +276,8 @@ router.get("/getrsoevents/:id", (req, res) => {
 
 
 
-router.post("/addrsoevents", (req, res) => {
-  let rso_id = null;
-  const rso_name = req.body.rso_name 
-  const event = {
+router.post("/addrsoevents", async (req, res) => {
+  const {
     name,
     description,
     category,
@@ -287,50 +286,26 @@ router.post("/addrsoevents", (req, res) => {
     start_time,
     end_time,
     location_id,
-    university_id
+    university_id,
+    rso_name
   } = req.body;
 
+  const event = {name, description, category, location_id, contact_phone, contact_email, start_time, end_time,university_id}
 
+  const sql = "INSERT INTO events SET ?";
+  const sql2 = "INSERT INTO rso_event SET ?";
   const rso_sql = "SELECT rso_id from rsos WHERE name = ?";
   const loc_sql = "SELECT * from events WHERE location_id = ?";
+  const loc_name_sql = "SELECT * from events WHERE name = ?";
 
-  pool.query(rso_sql, rso_name, (err, results) => {
-    if(err) throw err;
-    rso_id = results;
-  })
+  const getRsoId = await record.getStuff(rso_name,rso_sql);
+  const getLocation = await record.getLocation(location_id, loc_sql)
+  const notOverlapping = await record.overlapping(getLocation,start_time, end_time)
+  const addEvent = await record.addEvent(event, sql)
+  const getEvent = await record.getStuff(event.name, loc_name_sql)
+  const addRsoEvent = await record.addRsoEvent({event_id:getEvent.event_id, rso_id:getRsoId.rso_id}, sql2)
+  res.json(addRsoEvent)
 
-  pool.query(loc_sql, event.location_id, (err, results) => {
-    if (err) throw err;
-    let notOverlapping = true;
-
-    results.forEach((re) => {
-      if(((new Date(re.end_time ) - (new Date(req.body.start_time))) > 0) && ((new Date(req.body.end_time)) - new Date(re.start_time)) > 0) {
-        notOverlapping = false;
-      } 
-    })
-
-    if(notOverlapping) {
-      let sql = "INSERT INTO events SET ?";
-
-      pool.query(sql, event, (err, results) => {
-        if (err) throw err;
-    
-        const rso_event = {
-          event_id: results.insertId,
-          rso_id: rso_id
-        };
-    
-        let sql2 = "INSERT INTO rso_event SET ?";
-        pool.query(sql2, rso_event, (err, results) => {
-          if (err) throw err;
-          res.json(results);
-          console.log("1 rso event added");
-        });
-      });
-    } else {
-      res.send("Could not add. Time overlaps");
-    }
-  });
 });
 
 /**************************************************************************/
