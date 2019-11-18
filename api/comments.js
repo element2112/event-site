@@ -31,7 +31,7 @@ router.get('/getcomments', (req, res) => {
 // get comment by id
 router.get('/getcomments/:comment_id', (req, res) => {
   const { comment_id } = req.params;
-  const sql = 'SELECT * from comments WHERE comment_id = ?'
+  const sql = 'SELECT text from comments WHERE comment_id = ?'
 
   pool.query(sql , comment_id, (err, results) => {
     if(err) throw err
@@ -98,10 +98,11 @@ router.get('/ratings/:event_id', async (req, res) => {
 router.delete('/deletecomment/:id', (req, res) => {
   
   const id = req.params.id;
+  const uid = req.body.user_id;
   
-  let sql = "DELETE FROM comments WHERE comment_id = ?";
+  let sql = "DELETE FROM comments WHERE comment_id = ? AND user_id = ?";
 
-  pool.query(sql, id, (err, results) => {
+  pool.query(sql, [id, uid], (err, results) => {
     if(err) throw err;
     res.send(results);
     console.log('1 comment deleted');
@@ -109,14 +110,45 @@ router.delete('/deletecomment/:id', (req, res) => {
 
 });
 
-router.post('/editcomment', async (req, res) => {
+/**
+ * @route	Edit  api/comments/editcomment
+ * @desc	edit a comment
+ * @access	public
+*/
+router.patch('/editcomment/:id', (req, res) => {
   
-  const values = [req.body.text, req.body.comment_id];
+  const commid = req.params.id;
+  const uid = req.body.user_id;
+  const text = req.body.text;
   
-  let sql = "UPDATE comments SET text = ? WHERE comment_id = ?";
+  let sql = "UPDATE comments SET text = ? WHERE comment_id = ? AND user_id = ?";
 
-  const editedComment = await record.editComment(values, sql)
-  res.json(editedComment)
+  pool.query(sql, [text, commid, uid], (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('1 comment updated');
+  });
+
+});
+
+
+/**
+ * @route	GET  api/comments/geteventrating
+ * @desc	Get average event rating
+ * @access	public
+*/
+router.get('/geteventrating/:id', (req, res) => {
+
+  const eid = req.params.id;
+
+  let sql = 'SELECT AVG(rating) FROM comments WHERE event_id = ?';
+
+  pool.query(sql, eid, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('average event rating returned');
+  });
+
 });
   
 module.exports = router;
