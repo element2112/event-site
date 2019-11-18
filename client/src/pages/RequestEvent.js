@@ -16,7 +16,7 @@ const headers = {
 
 class RequestEvent extends React.Component {
   state = {
-    startDate: new Date(),
+    date: Date.now(),
     isAdmin: false,
     name: null,
     description: null,
@@ -28,27 +28,28 @@ class RequestEvent extends React.Component {
     locationId: null,
     locationName: null,
     contactPhone: null,
-    contactEmail: null
+    contactEmail: null,
+    locations: [],
+    rsos: []
   };
 
   componentDidMount() {
    // this.checkIsAdmin();
+   this.getLocations();
+   this.getAdminRsos();
   }
 
   //------------------ API calls ----------------------//
   requestEvent = (e) => {
     e.preventDefault();
 
-    if(this.state.locationName !== null) {
-      // add location
-      // then add event
-    }
-
     // format into datetime
-    const start = "";
-    const end = "";
+    const start = `${this.state.date.toISOString().split("T")[0]} ${this.state.startTime}`;
+    const end = `${this.state.date.toISOString().split("T")[0]} ${this.state.endTime}`;
 
-    console.log({
+    //console.log(new Date(start).toISOString().slice(0, 19).replace('T', ' '))
+    let url = "";
+    let event = {
       name: this.state.name,
       description: this.state.description,
       category: this.state.category,
@@ -56,16 +57,100 @@ class RequestEvent extends React.Component {
       contact_email: this.state.contactEmail,
       start_time: start,
       end_time: end,
-      locationId: this.state.locationId,
-      university_id: localStorage.getItem("uni_id")
-    })
+      location_id: this.state.locationId,
+      university_id: localStorage.getItem("uni_id"),
+      rso_id: this.state.access
+    }
 
+    if(this.state.access ===  "Public")
+      url = "http://localhost:4000/api/events/addpublic";
+    else if(this.state.access === "Private")
+      url = "http://localhost:4000/api/events/addprivate";
+    else 
+      url = "http://localhost:4000/api/events/addrso";
+
+    //add location if needed
+    if(this.state.locationName !== null) {
+      fetch("http://localhost:4000/api/location/addlocation", {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({
+            name: this.state.locationName,
+            uni_id: localStorage.getItem("uni_id")
+        })
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          // add event with newly added location
+            if (res) {
+              fetch(url, {
+                method: "POST",
+                headers: headers,
+                body: JSON.stringify({...event, location_id: res.loc_id})
+              })
+              .then((res) => res.json())
+              .then((res) => {
+                  if (res) {
+                    console.log(res);
+                  } else throw res
+              }).catch((res) => console.log(res))
+            } else throw res
+        })
+        .catch((res) => console.log(res))
+    // else just add event with a given location
+    } else {
+      fetch(url, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(event)
+      })
+      .then((res) => res.json())
+      .then((res) => {
+          if (res) {
+            console.log(res);
+          } else throw res
+      }).catch((res) => console.log(res))
+    }
+
+  }
+
+  getLocations = () => {
+    fetch("http://localhost:4000/api/location/getlocations", {
+        method: "GET",
+        headers: headers
+    })
+        .then((res) => res.json())
+        .then((res) => {
+            if (res) {
+              this.setState({locations: res});
+            } else throw res
+        })
+        .catch((res) => console.log(res))
+  }
+
+  getAdminRsos = () => {
+    fetch("http://localhost:4000/api/users/admins/" + localStorage.getItem("user_id"), {
+        method: "GET",
+        headers: headers
+    })
+        .then((res) => res.json())
+        .then((res) => {
+            if (res) {
+              const rsos = [];
+              res.forEach(rso => {
+                rsos.push({name: rso.name, id: rso.rso_id})
+              });
+              this.setState({rsos: rsos});
+              console.log(res);
+            } else throw res
+        })
+        .catch((res) => console.log(res))
   }
 
   //------------------ helpers ----------------------//
   handleDateChange = date => {
     this.setState({
-      startDate: date
+      date: date
     });
   };
 
@@ -95,7 +180,19 @@ class RequestEvent extends React.Component {
 
   //------------------ render ----------------------//
   render () {
-    const datePicker = <DatePicker selected={this.state.startDate} onChange={this.handleDateChange} className="event-date-btn"/>
+    const datePicker = <DatePicker selected={this.state.date} onChange={this.handleDateChange} className="event-date-btn"/>
+
+    const locations = this.state.locations.map((loc, index) => {
+      return (
+      <option value={loc.loc_id}>{loc.name}</option>
+      )
+    })
+
+    const rsos = this.state.rsos.map((r, index) => {
+      return (
+      <option value={r.id}>{r.name}</option>
+      )
+    })
 
     const form = (
       <Form style={{display: "flex"}} onSubmit={this.requestEvent}>
@@ -130,6 +227,7 @@ class RequestEvent extends React.Component {
               <option value="" disabled selected>Select Access Level</option>
               <option>Public</option>
               <option>Private</option>
+              {rsos}
             </Form.Control>
           </Form.Group>
 
@@ -150,16 +248,15 @@ class RequestEvent extends React.Component {
           </FormGroup>
 
           <Form.Group controlId="form-basic-location-select">
-            <Form.Control as="select" className="home-dropdown text-left event-drop-btn" onChange={this.onChange} name="location">
+            <Form.Control as="select" className="home-dropdown text-left event-drop-btn" onChange={this.onChange} name="locationId">
               <option value="" disabled selected>Select Location</option>
-              <option>SU</option>
-              <option>CB2</option>
+              {locations}
             </Form.Control>
           </Form.Group>
 
           <Form.Group controlId="event-location-text">
             <Form.Label>OR</Form.Label>
-            <Form.Control type="text" placeholder="Location Name" className="request-input" name="location_name" onChange={this.onChange}></Form.Control>
+            <Form.Control type="text" placeholder="Location Name" className="request-input" name="locationName" onChange={this.onChange}></Form.Control>
           </Form.Group>
           <Form.Group controlId="event-phone">
             <Form.Control type="text" placeholder="Contact Phone Number" className="request-input" name="contactPhone" onChange={this.onChange}></Form.Control>

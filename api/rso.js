@@ -14,16 +14,19 @@ const record = require('./record');
  * @access	public
 */
 
-function asyncHandler(cb){
-  return async (req,res, next) => {
-      try {
-          await cb(req, res, next);
-      } catch(err) {
-          next(err);
-      }
+function asyncHandler(cb) {
+  return async (req, res, next) => {
+    try {
+      await cb(req, res, next);
+    } catch (err) {
+      next(err);
+    }
   }
 }
 
+var fn = function asyncMultiplyBy2(user,sql){ // sample async action
+  return new Promise(resolve => record.getUsers(user,sql));
+};
 
 router.get('/testrso', (req, res, err) => res.json("rso Works"));
 
@@ -48,16 +51,16 @@ router.get('/getrso/:user_id', async (req, res) => {
   const user_id = req.params.user_id;
   const sql = 'SELECT * from rso_members WHERE user_id IN (SELECT user_id FROM rso_members WHERE user_id = ?)';
 
-  const sql2= 'SELECT * from rsos WHERE rso_id IN (SELECT rso_id FROM rso_members WHERE rso_id = ?)'
+  const sql2 = 'SELECT * from rsos WHERE rso_id IN (SELECT rso_id FROM rso_members WHERE rso_id = ?)'
 
-  const user = await record.getStuff(user_id,sql)
-  const rsos = await record.getStuff(user.rso_id,sql2)
+  const user = await record.getStuff(user_id, sql)
+  const rsos = await record.getStuff(user.rso_id, sql2)
   res.json(rsos)
 });
 
 
-// get rso by rso_member id
-router.get('/getrso/:user_id', (req, res) => {
+// get rsos by rso_member id
+router.get('/getrsosforuser/:user_id', (req, res) => {
   const { user_id } = req.params
   const sql = 'SELECT * from rso_members WHERE user_id = ?';
 
@@ -68,16 +71,16 @@ router.get('/getrso/:user_id', (req, res) => {
   })
 });
 
-router.post("/reject-rso", async (req, res) => {
+router.post("/reject-rso/:rso_id", async (req, res) => {
   const {
     rso_id
-  } = req.body;
+  } = req.params;
 
   const deleteRso = await record.deleteRso(rso_id);
   const deleteRsoUsers = await record.deleteRsoUsers(rso_id);
   const deleteRsoEvents = await record.deleteRsoEvents(rso_id);
 
-  res.json({message:"Everythin about the rso is deleted"})
+  res.json({ message: "Everythin about the rso is deleted" })
 })
 
 
@@ -95,8 +98,6 @@ router.post("/approverso/:id", (req, res) => {
     console.log("rso approved");
   });
 });
-
-
 
 
 /**
@@ -148,30 +149,25 @@ router.post('/addrso', asyncHandler(async (req, res) => {
     name: req.body.name,
     uni_id: req.body.uni_id
   }
-
+  let rsoUsers = []
   const rso_members = req.body.rso_members.split(' ')
-
+  const sql = 'SELECT * FROM users WHERE email = ?'
   const createRso = await record.createRso(fields);
-  const getInsertedRso = await record.getInsertedRso(fields.name);
-  // await rso_members.forEach(async(member, index, array) => {
+  const getUsers = new Promise(resolve => rso_members.map(mem => record.getUsers(mem,sql)))
+  // res.(getUsers)
+  // const getInsertedRso = await record.getInsertedRso(fields.name);
+
+ 
+
+  // rso_members.forEach(async(member, index, array) => {
   //     console.log(member)
   //     const temp = await record.getUsers(member);
-      
+
   // });
 
+  res.send(getUsers)
+}))
 
-  // console.dir(rso_members[0])
-  // const addAdmin = await record.addRsoAdmin(rso_members[0])
-  // const rsoUsers = []
-  // rso_members.forEach(async member => {
-  //   rsoUsers.push(await record.getUsers(member))
-  // })
-
-  // console.dir(rsoUsers)
-  res.send('boom')
-  }))
-    
-// })
 
 /**
 * @route	delete  api/rso/deleterso
@@ -191,5 +187,103 @@ router.delete('/deleterso/:id', (req, res) => {
   });
 
 });
+
+router.post('/requestrso', (req, res) => {
+
+  // request rso
+  const rso = {
+    approved: 0,
+    active: 1,
+    name: req.body.name,
+    uni_id: req.body.uni_id
+  }
+
+  const members = req.body.members;
+
+  let rsoSql = 'INSERT INTO rsos SET ?';
+
+  pool.query(rsoSql, rso, (err, results) => {
+    if (err) throw err;
+    console.log('1 rso added');
+
+    const rso_id = results.insertId;
+
+    let membersIDSql = "select * from users where email in (?)";
+
+    pool.query(membersIDSql, [members], (err, results) => {
+      if (err) throw err;
+      console.log("members ids retrieved")
+
+      let queryMembers = [];
+
+      // form user_id, rso_id pairs
+      results.forEach(member => {
+        queryMembers.push({"user_id": member.user_id, "rso_id": rso_id});
+      });
+
+      // front end must always send admin as first member
+      const admin = {user_id: queryMembers[0].user_id, rso_id: rso_id};
+    
+      //let addMembersSql = "insert into rso_members (user_id, rso_id) VALUES ?"
+      // insert members
+      pool.query(
+        'INSERT INTO rso_members (user_id, rso_id) VALUES ?',
+        [queryMembers.map(item => [item.user_id, item.rso_id])],
+        (error, results) => {
+          console.log("members added")
+        }
+      );
+
+      // insert admin
+      let adminSql = "insert into admins set ?"
+      pool.query(adminSql, admin, (err, results) => {
+        if (err) throw err;
+        res.send(results);
+        console.log('admin added');
+      });
+
+    });
+
+  });
+
+});
+router.post('/join', asyncHandler(async (req, res) => {
+  const member = {
+    rso_id: req.query.rso_id,
+    user_id: req.query.user_id
+  }
+
+  const sql = "INSERT INTO rso_members (user_id, rso_id) VALUES (" + user_id + ", " + rso_id + ")"
+
+  pool.query(sql, member, (err, results) => {
+    if (err) throw err;
+    res.send("test");
+    console.log('rso joined');
+  });
+}))
+
+
+router.post('/leave', asyncHandler(async (req, res) => {
+ 
+  const user_id = req.body.user_id
+  const rso_id = req.body.rso_id
+
+  const sql1 = 'DELETE FROM rso_members WHERE user_id = ? AND rso_id = ?'
+  const sql2 = 'DELETE FROM admins WHERE user_id = ? AND rso_id = ?'
+
+  pool.query(sql1, [user_id, rso_id], (err, results) => {
+    if (err) throw err;
+    res.json(results);
+    console.log('rso left');
+  });
+
+  pool.query(sql2, [user_id, rso_id], (err, results) => {
+    if (err) throw err;
+    console.log('admin left');
+  });
+}))
+
+
+
 
 module.exports = router;

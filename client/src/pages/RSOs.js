@@ -7,7 +7,7 @@ import InfoCard from "../components/InfoCard";
 import "../styles/Page.css";
 
 const headers = {
-  "Content-Type": "application/json",
+  "Content-Type": "application/x-www-form-urlencoded",
 }
 
 class RSOs extends React.Component {
@@ -18,6 +18,7 @@ class RSOs extends React.Component {
 
   componentDidMount() {
     this.getRsos();
+    this.getMemberRsos();
   }
 
   //------------------ API calls ----------------------//
@@ -40,17 +41,83 @@ class RSOs extends React.Component {
         .catch((res) => console.log(res))
   }
 
+  getMemberRsos = () => {
+    fetch("http://localhost:4000/api/rso/getrsosforuser/" + localStorage.getItem("user_id"), {
+        method: "GET",
+        headers: headers
+    })
+        .then((res) => res.json())
+        .then((res) => {
+            if (res) {
+              const rsos = [];
+              res.forEach(rso => {
+                rsos.push(rso.rso_id)
+              });
+              this.setState({memberRSOs: rsos});
+              console.log(res);
+            } else throw res
+        })
+        .catch((res) => console.log(res))
+  }
+
+  leaveRSO = (id) => {
+    fetch("http://localhost:4000/api/rso/leave", {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({
+          user_id: localStorage.getItem("user_id"),
+          rso_id: id
+        })
+    })
+        .then((res) => res.json())
+        .then((res) => {
+            if (res) {
+              this.getRsos();
+              this.getMemberRsos();
+              console.log(res);
+            } else throw res
+        })
+        .catch((res) => console.log(res))
+  }
+
+  joinRSO = (id) => {
+    console.log(localStorage.getItem("user_id") + " " +  id)
+    fetch("http://localhost:4000/api/events/join/", {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({
+          user_id: 43,
+          rso_id: 228
+        })
+    })
+        .then((res) => res.json())
+        .then((res, err) => {
+            if (res) {
+              this.getRsos();
+              this.getMemberRsos();
+              console.log(res);
+            } else throw err
+        })
+        .catch((res) => console.log(res))
+  }
+
   //------------------ Render ----------------------//
   render () {
-    const joinRsoBtn = <Button variant="primary" className="approve-btn">JOIN</Button>
+    let leaveBtns = []
+    this.state.rsos.forEach((r) => {
+      leaveBtns.push(<Button variant="primary" className="decline-btn" onClick={() => this.leaveRSO(r.id)}>LEAVE</Button>);
+    })
 
-    const leaveRsoBtn = <Button variant="primary" className="decline-btn">LEAVE</Button>
+    let joinBtns = []
+    this.state.rsos.forEach((r) => {
+      joinBtns.push(<Button variant="primary" className="approve-btn" onClick={() => this.joinRSO(r.id)}>JOIN</Button>);
+    })
 
-    const rsos = this.state.rsos.map((rso, key) => {
+    const rsos = this.state.rsos.map((rso, index) => {
       if(this.state.memberRSOs.includes(rso.id)) {
-        return (<InfoCard info={rso.name} button1={leaveRsoBtn}></InfoCard>)
+        return (<InfoCard info={rso.name} button1={leaveBtns[index]}></InfoCard>)
       } else {
-        return (<InfoCard info={rso.name} button1={joinRsoBtn}></InfoCard>)
+        return (<InfoCard info={rso.name} button1={joinBtns[index]}></InfoCard>)
       }
     })
 
