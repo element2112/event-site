@@ -14,6 +14,7 @@ const record = require('./record');
  * @access	public
 */
 
+
 function asyncHandler(cb) {
   return async (req, res, next) => {
     try {
@@ -87,10 +88,10 @@ router.post("/reject-rso/:rso_id", async (req, res) => {
 
 
 // approve rso
-router.post("/approverso/:id", (req, res) => {
+router.patch("/approverso/:id", (req, res) => {
   const { id } = req.params;
 
-  let sql = "UPDATE rsos SET approved = 1 WHERE rso_id = ?";
+  let sql = "UPDATE rsos SET approved = 1, active = 1 WHERE rso_id = ?";
 
   pool.query(sql, id, (err, results) => {
     if (err) throw err;
@@ -145,7 +146,7 @@ router.post('/addrso', asyncHandler(async (req, res) => {
 
   const fields = {
     approved: 0,
-    active: 1,
+    active: 0,
     name: req.body.name,
     uni_id: req.body.uni_id
   }
@@ -164,7 +165,6 @@ router.post('/addrso', asyncHandler(async (req, res) => {
   //     const temp = await record.getUsers(member);
 
   // });
-
   res.send(getUsers)
 }))
 
@@ -247,41 +247,53 @@ router.post('/requestrso', (req, res) => {
   });
 
 });
-router.post('/join', asyncHandler(async (req, res) => {
+
+router.post('/joinrso', (req, res) => {
+  
+  console.log('here');
+  console.log(req.body.user_id);
+  // console.log(req.body.id);
+  
   const member = {
-    rso_id: req.query.rso_id,
-    user_id: req.query.user_id
+    user_id: req.body.user_id,
+    rso_id: req.body.rso_id
   }
 
-  const sql = "INSERT INTO rso_members (user_id, rso_id) VALUES (" + user_id + ", " + rso_id + ")"
+  const sql = "INSERT INTO rso_members SET ?"
+
 
   pool.query(sql, member, (err, results) => {
+    
     if (err) throw err;
-    res.send("test");
-    console.log('rso joined');
+    res.send(results);
+    
   });
-}))
+  
+});
 
 
-router.post('/leave', asyncHandler(async (req, res) => {
+router.delete('/leaverso', (req, res) => {
  
-  const user_id = req.body.user_id
-  const rso_id = req.body.rso_id
+
+  const user_id = req.body.user_id;
+  const rso_id = req.body.rso_id;
 
   const sql1 = 'DELETE FROM rso_members WHERE user_id = ? AND rso_id = ?'
   const sql2 = 'DELETE FROM admins WHERE user_id = ? AND rso_id = ?'
 
   pool.query(sql1, [user_id, rso_id], (err, results) => {
+    
     if (err) throw err;
-    res.json(results);
+    pool.query(sql2, [user_id, rso_id], (err, results) => {
+      if (err) throw err;
+      res.json(results);
+      console.log('admin left');
+    });
+
     console.log('rso left');
   });
 
-  pool.query(sql2, [user_id, rso_id], (err, results) => {
-    if (err) throw err;
-    console.log('admin left');
-  });
-}))
+});
 
 
 

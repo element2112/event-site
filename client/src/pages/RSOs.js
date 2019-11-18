@@ -7,7 +7,7 @@ import InfoCard from "../components/InfoCard";
 import "../styles/Page.css";
 
 const headers = {
-  "Content-Type": "application/x-www-form-urlencoded",
+  "Content-Type": "application/json"
 }
 
 class RSOs extends React.Component {
@@ -61,8 +61,8 @@ class RSOs extends React.Component {
   }
 
   leaveRSO = (id) => {
-    fetch("http://localhost:4000/api/rso/leave", {
-        method: "POST",
+    fetch("http://localhost:4000/api/rso/leaverso", {
+        method: "DELETE",
         headers: headers,
         body: JSON.stringify({
           user_id: localStorage.getItem("user_id"),
@@ -81,13 +81,14 @@ class RSOs extends React.Component {
   }
 
   joinRSO = (id) => {
-    console.log(localStorage.getItem("user_id") + " " +  id)
-    fetch("http://localhost:4000/api/events/join/", {
+    console.log("rso id " + id);
+    console.log("user id " + localStorage.getItem("user_id"));
+    fetch("http://localhost:4000/api/rso/joinrso", {
         method: "POST",
         headers: headers,
         body: JSON.stringify({
-          user_id: 43,
-          rso_id: 228
+          user_id: localStorage.getItem("user_id"),
+          rso_id: id
         })
     })
         .then((res) => res.json())
