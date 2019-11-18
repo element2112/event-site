@@ -26,8 +26,11 @@ class RequestRSO extends React.Component {
 
     const members = this.state.students.split(" ");
 
-    if(members.length < 5) 
+    if(members.length < 5) {
+      alert("Please enter at least 5 student emails");
       return;
+    }
+      
 
     fetch("http://localhost:4000/api/rso/requestrso", {
         method: "POST",
@@ -41,7 +44,7 @@ class RequestRSO extends React.Component {
         .then((res) => res.json())
         .then((res) => {
             if (res) {
-              console.log("requested")
+              alert("Requested")
             } else throw res
         })
         .catch((res) => console.log(res))
@@ -59,11 +62,11 @@ class RequestRSO extends React.Component {
     const form = (
       <Form onSubmit={this.requestRso}>
         <Form.Group controlId="form-basic-rso-name">
-          <Form.Control type="text" placeholder="RSO Name" className="home-input" name="rsoName" onChange={this.onChange}></Form.Control>
+          <Form.Control type="text" required placeholder="RSO Name" className="home-input" name="rsoName" onChange={this.onChange}></Form.Control>
         </Form.Group>
         <Form.Group controlId="form-basic-rso-students">
           <Form.Label>Write student emails separated by a space</Form.Label>
-          <Form.Control as="textarea" placeholder="Add at least 5 students" className="home-textarea" rows="10" name="students" onChange={this.onChange}></Form.Control>
+          <Form.Control as="textarea" required placeholder="Add at least 5 students" className="home-textarea" rows="10" name="students" onChange={this.onChange}></Form.Control>
         </Form.Group>
         <Button size="md" type="submit" className="request-btn">
           REQUEST

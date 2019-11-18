@@ -139,7 +139,7 @@ router.get('/geteventrating/:id', (req, res) => {
 
   pool.query(sql, eid, (err, results) => {
     if(err) throw err;
-    res.send(results);
+    res.json(results[0]["AVG(rating)"]);
     console.log('average event rating returned');
   });
 

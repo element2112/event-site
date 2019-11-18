@@ -26,6 +26,8 @@ class EventCard extends React.Component {
       rating = <div>{star}{star}{star}{star}</div>;
     } else if (this.props.rating == 5) {
       rating = <div>{star}{star}{star}{star}{star}</div>;
+    } else if(this.props.raing == 0) {
+      rating = null;
     }
 
     return (
