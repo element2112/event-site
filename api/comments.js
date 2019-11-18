@@ -30,7 +30,7 @@ router.get('/getcomments', (req, res) => {
 // get comment by id
 router.get('/getcomments/:comment_id', (req, res) => {
   const { comment_id } = req.params;
-  const sql = 'SELECT * from comments WHERE comment_id = ?'
+  const sql = 'SELECT text from comments WHERE comment_id = ?'
 
   pool.query(sql , comment_id, (err, results) => {
     if(err) throw err
@@ -73,15 +73,57 @@ router.post('/addcomment', (req, res) => {
 router.delete('/deletecomment/:id', (req, res) => {
   
   const id = req.params.id;
+  const uid = req.body.user_id;
   
-  let sql = "DELETE FROM comments WHERE comment_id = ?";
+  let sql = "DELETE FROM comments WHERE comment_id = ? AND user_id = ?";
 
-  pool.query(sql, id, (err, results) => {
+  pool.query(sql, [id, uid], (err, results) => {
     if(err) throw err;
     res.send(results);
     console.log('1 comment deleted');
   });
 
+});
+
+/**
+ * @route	Edit  api/comments/editcomment
+ * @desc	edit a comment
+ * @access	public
+*/
+router.patch('/editcomment/:id', (req, res) => {
+  
+  const commid = req.params.id;
+  const uid = req.body.user_id;
+  const text = req.body.text;
+  
+  let sql = "UPDATE comments SET text = ? WHERE comment_id = ? AND user_id = ?";
+
+  pool.query(sql, [text, commid, uid], (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('1 comment updated');
+  });
+
+});
+
+
+/**
+ * @route	GET  api/comments/geteventrating
+ * @desc	Get average event rating
+ * @access	public
+*/
+router.get('/geteventrating/:id', (req, res) => {
+
+  const eid = req.params.id;
+
+  let sql = 'SELECT AVG(rating) FROM comments WHERE event_id = ?';
+
+  pool.query(sql, eid, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log('average event rating returned');
+  });
+  
 });
   
 module.exports = router;
