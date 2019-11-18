@@ -16,10 +16,13 @@ router.get('/testcomments', (req, res,err) => res.json("comments Works"));
  * @desc	Get all comments
  * @access	public
 */
-router.get('/getcomments', (req, res) => {
-    let sql = 'SELECT * from comments';
+router.get('/getcomments/:id', (req, res) => {
+
+    const event_id = req.params.id;
+
+    let sql = 'select * from comments left join users on comments.user_id = users.user_id where event_id = ?';
   
-    pool.query(sql, (err, results) => {
+    pool.query(sql, event_id, (err, results) => {
       if(err) throw err;
       res.send(results);
       console.log('all comments returned');
@@ -27,12 +30,14 @@ router.get('/getcomments', (req, res) => {
     
   });
 
-// get comment by id
-router.get('/getcomments/:comment_id', (req, res) => {
-  const { comment_id } = req.params;
-  const sql = 'SELECT text from comments WHERE comment_id = ?'
+// get comments by user id for an event
+router.post('/getusercommentsbyevent/:id', (req, res) => {
+  const user_id = req.params.id;
+  const event_id = req.body.event_id;
 
-  pool.query(sql , comment_id, (err, results) => {
+  const sql = "select * from comments where user_id = " + user_id + " and event_id = " + event_id;
+
+  pool.query(sql , (err, results) => {
     if(err) throw err
     res.json(results)
   })
@@ -48,7 +53,6 @@ router.post('/addcomment', (req, res) => {
   let sql = "INSERT INTO comments SET ?";
 
   const fields = {
-    comment_id: req.body.comment_id,
     text: req.body.text,
     timestamp: req.body.timestamp,
     rating: req.body.rating,
