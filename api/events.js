@@ -123,7 +123,7 @@ router.post("/addpublic", (req, res) => {
       });
 
     } else {
-      res.send("Could not add. Time overlaps");
+      res.json("Could not add. Time overlaps");
     }
   });
 
@@ -222,7 +222,7 @@ router.post("/addprivate", (req, res) => {
         });
       });
     } else {
-      res.send("Could not add. Time overlaps");
+      res.json("Could not add. Time overlaps");
     }
   });
 

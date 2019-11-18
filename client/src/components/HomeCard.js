@@ -94,15 +94,15 @@ class HomeCard extends React.Component {
             uni_id: this.state.uni_id
         })
     })
-        .then((res) => res.json())
-        .then((res) => {
-            if (res) {
-              this.setState({authenticated: true});
-              localStorage.setItem("user_id", res.user_id);
-              localStorage.setItem("uni_id", res.uni_id);
-            } else throw res
-        })
-        .catch((res) => console.log(res))
+    .then((res) => res.json())
+    .then((res) => {
+        if (res) {
+          this.setState({authenticated: true});
+          localStorage.setItem("user_id", res.user_id);
+          localStorage.setItem("uni_id", res.uni_id);
+        } else throw res
+    })
+    .catch((res) => console.log(res))
   }
 
   login = (e) => {
