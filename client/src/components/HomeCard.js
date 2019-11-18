@@ -56,6 +56,11 @@ class HomeCard extends React.Component {
   registerUni = (e) => {
     e.preventDefault();
 
+    if(this.state.password1 !== this.state.password2) {
+      alert("Passwords do not match");
+      return;
+    }
+
     fetch("http://localhost:4000/api/university/registeruni", {
         method: "POST",
         headers: headers,
@@ -82,6 +87,11 @@ class HomeCard extends React.Component {
 
   register = (e) => {
     e.preventDefault();
+
+    if(this.state.password1 !== this.state.password2) {
+      alert("Passwords do not match");
+      return;
+    }
 
     fetch("http://localhost:4000/api/users/registeruser", {
         method: "POST",
@@ -169,10 +179,10 @@ class HomeCard extends React.Component {
                 <Card.Body className="home-card-color">
                   <Form onSubmit={this.login}>
                     <Form.Group controlId="form-basic-email">
-                      <Form.Control type="email" placeholder="Email" className="home-input" name="email" name="email" onChange={this.onChange}></Form.Control>
+                      <Form.Control type="email" required placeholder="Email" className="home-input" name="email" name="email" onChange={this.onChange}></Form.Control>
                     </Form.Group>
                     <Form.Group controlId="form-basic-password">
-                      <Form.Control type="password" placeholder="Password" className="home-input" name="password1" name="password1" onChange={this.onChange}></Form.Control>
+                      <Form.Control type="password" required placeholder="Password" className="home-input" name="password1" name="password1" onChange={this.onChange}></Form.Control>
                     </Form.Group>
                     <Button size="lg" block className="home-button home-input" type="submit">
                       LOGIN
@@ -187,22 +197,22 @@ class HomeCard extends React.Component {
                 <Card.Body className="home-card-color">
                   <Form onSubmit={this.register}>
                     <Form.Group controlId="form-basic-email">
-                      <Form.Control type="email" placeholder="Email" className="home-input home-register-input" name="email" onChange={this.onChange}></Form.Control>
+                      <Form.Control type="email" required placeholder="Email" className="home-input home-register-input" name="email" onChange={this.onChange}></Form.Control>
                     </Form.Group>
                     <Form.Group controlId="form-basic-first-name">
-                      <Form.Control type="input" placeholder="First Name" className="home-input home-register-input" name="first_name" onChange={this.onChange}></Form.Control>
+                      <Form.Control type="input" required placeholder="First Name" className="home-input home-register-input" name="first_name" onChange={this.onChange}></Form.Control>
                     </Form.Group>
                     <Form.Group controlId="form-basic-last-name">
-                      <Form.Control type="input" placeholder="Last Name" className="home-input home-register-input" name="last_name" onChange={this.onChange}></Form.Control>
+                      <Form.Control type="input" required placeholder="Last Name" className="home-input home-register-input" name="last_name" onChange={this.onChange}></Form.Control>
                     </Form.Group>
                     <Form.Group controlId="form-basic-password">
-                      <Form.Control type="password" placeholder="Password" className="home-input home-register-input" name="password1" onChange={this.onChange}></Form.Control>
+                      <Form.Control type="password" required placeholder="Password" className="home-input home-register-input" name="password1" onChange={this.onChange}></Form.Control>
                     </Form.Group>
                     <Form.Group controlId="form-basic-confirm-password">
-                      <Form.Control type="password" placeholder="Confirm Password" className="home-input home-register-input" name="password2" onChange={this.onChange}></Form.Control>
+                      <Form.Control type="password" required placeholder="Confirm Password" className="home-input home-register-input" name="password2" onChange={this.onChange}></Form.Control>
                     </Form.Group>
                     <Form.Group controlId="form-basic-uni-select">
-                      <Form.Control as="select" className="home-dropdown" onChange={this.onChange} name="uni_id">
+                      <Form.Control as="select" required className="home-dropdown" onChange={this.onChange} name="uni_id">
                       <option value="" disabled selected>Select University</option>
                         {universities}
                       </Form.Control>
@@ -220,28 +230,28 @@ class HomeCard extends React.Component {
             <Card.Body className="home-card-color">
               <Form>
                 <Form.Group controlId="form-basic-email">
-                  <Form.Control type="email" placeholder="Email" className="home-input home-register-input" name="email" onChange={this.onChange}></Form.Control>
+                  <Form.Control type="email" required placeholder="Email" className="home-input home-register-input" name="email" onChange={this.onChange}></Form.Control>
                 </Form.Group>
                 <Form.Group controlId="form-basic-first-name">
-                  <Form.Control type="input" placeholder="First Name" className="home-input home-register-input" name="first_name" onChange={this.onChange}></Form.Control>
+                  <Form.Control type="input" required placeholder="First Name" className="home-input home-register-input" name="first_name" onChange={this.onChange}></Form.Control>
                 </Form.Group>
                 <Form.Group controlId="form-basic-last-name">
-                  <Form.Control type="input" placeholder="Last Name" className="home-input home-register-input" name="last_name" onChange={this.onChange}></Form.Control>
+                  <Form.Control type="input" required placeholder="Last Name" className="home-input home-register-input" name="last_name" onChange={this.onChange}></Form.Control>
                 </Form.Group>
                 <Form.Group controlId="form-basic-password">
-                  <Form.Control type="password" placeholder="Password" className="home-input home-register-input" name="password1" onChange={this.onChange}></Form.Control>
+                  <Form.Control type="password" required placeholder="Password" className="home-input home-register-input" name="password1" onChange={this.onChange}></Form.Control>
                 </Form.Group>
                 <Form.Group controlId="form-basic-confirm-password">
-                  <Form.Control type="password" placeholder="Confirm Password" className="home-input home-register-input" name="password2" onChange={this.onChange}></Form.Control>
+                  <Form.Control type="password" required placeholder="Confirm Password" className="home-input home-register-input" name="password2" onChange={this.onChange}></Form.Control>
                 </Form.Group>
                 <Form.Group controlId="form-basic-college-name">
-                  <Form.Control type="input" placeholder="University Name" className="home-input home-register-input" name="uni_name" onChange={this.onChange}></Form.Control>
+                  <Form.Control type="input" required placeholder="University Name" className="home-input home-register-input" name="uni_name" onChange={this.onChange}></Form.Control>
                 </Form.Group>
                 <Form.Group controlId="form-basic-college-address">
-                  <Form.Control type="input" placeholder="University Address" className="home-input home-register-input" name="uni_address" onChange={this.onChange}></Form.Control>
+                  <Form.Control type="input" required placeholder="University Address" className="home-input home-register-input" name="uni_address" onChange={this.onChange}></Form.Control>
                 </Form.Group>
                 <Form.Group controlId="form-basic-college-email">
-                  <Form.Control type="input" placeholder="University Email Domain" className="home-input home-register-input" name="uni_email" onChange={this.onChange}></Form.Control>
+                  <Form.Control type="input" required placeholder="University Email Domain" className="home-input home-register-input" name="uni_email" onChange={this.onChange}></Form.Control>
                 </Form.Group>
                 
                 <Button size="lg" block className="home-button home-input" type="submit" id="home-register-button" onClick={this.registerUni}>

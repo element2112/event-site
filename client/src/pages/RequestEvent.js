@@ -199,15 +199,15 @@ class RequestEvent extends React.Component {
         <div style={{display: "inline-block", flex: "1", paddingRight: "20px"}}>
 
           <Form.Group controlId="event-name">
-            <Form.Control type="text" placeholder="Event Name" className="request-input" name="name" onChange={this.onChange}></Form.Control>
+            <Form.Control required type="text" placeholder="Event Name" className="request-input" name="name" onChange={this.onChange}></Form.Control>
           </Form.Group>
 
           <Form.Group controlId="event-description">
-            <Form.Control as="textarea" placeholder="Event Description" className="home-textarea" rows="5" name="description" onChange={this.onChange}></Form.Control>
+            <Form.Control as="textarea" required placeholder="Event Description" className="home-textarea" rows="5" name="description" onChange={this.onChange}></Form.Control>
           </Form.Group>
 
           <Form.Group controlId="form-basic-category-select">
-            <Form.Control as="select" className="home-dropdown text-left event-drop-btn" onChange={this.onChange} name="category">
+            <Form.Control as="select" required className="home-dropdown text-left event-drop-btn" onChange={this.onChange} name="category">
               <option value="" disabled selected>Select Category</option>
               <option>Sport</option>
               <option>Academic</option>
@@ -223,7 +223,7 @@ class RequestEvent extends React.Component {
           </Form.Group>
 
           <Form.Group controlId="form-basic-access-select">
-            <Form.Control as="select" className="home-dropdown text-left event-drop-btn" onChange={this.onChange} name="access">
+            <Form.Control as="select" required className="home-dropdown text-left event-drop-btn" onChange={this.onChange} name="access">
               <option value="" disabled selected>Select Access Level</option>
               <option>Public</option>
               <option>Private</option>
@@ -248,7 +248,7 @@ class RequestEvent extends React.Component {
           </FormGroup>
 
           <Form.Group controlId="form-basic-location-select">
-            <Form.Control as="select" className="home-dropdown text-left event-drop-btn" onChange={this.onChange} name="locationId">
+            <Form.Control as="select" required className="home-dropdown text-left event-drop-btn" onChange={this.onChange} name="locationId">
               <option value="" disabled selected>Select Location</option>
               {locations}
             </Form.Control>
@@ -259,10 +259,10 @@ class RequestEvent extends React.Component {
             <Form.Control type="text" placeholder="Location Name" className="request-input" name="locationName" onChange={this.onChange}></Form.Control>
           </Form.Group>
           <Form.Group controlId="event-phone">
-            <Form.Control type="text" placeholder="Contact Phone Number" className="request-input" name="contactPhone" onChange={this.onChange}></Form.Control>
+            <Form.Control type="text" required placeholder="Contact Phone Number" className="request-input" name="contactPhone" onChange={this.onChange}></Form.Control>
           </Form.Group>
           <Form.Group controlId="event-email">
-            <Form.Control type="email" placeholder="Contact Email" className="request-input" name="contactEmail" onChange={this.onChange}></Form.Control>
+            <Form.Control type="email" required placeholder="Contact Email" className="request-input" name="contactEmail" onChange={this.onChange}></Form.Control>
           </Form.Group>
           <Button size="md" type="submit" className="request-btn">
             REQUEST

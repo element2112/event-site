@@ -32,6 +32,7 @@ class Event extends React.Component {
     this.getInfo();
     this.getComments();
     this.getUserComments();
+    this.getRating();
   }
 
   //------------------ API calls ----------------------//
@@ -54,6 +55,23 @@ class Event extends React.Component {
                 contactPhone: res.contact_phone,
                 contactEmail: res.contact_email
               }})
+            } else throw res
+        })
+        .catch((res) => console.log(res))
+  }
+
+  getRating = () => {
+    fetch("http://localhost:4000/api/comments/geteventrating/" + this.state.eventId, {
+        method: "GET",
+        headers: headers
+    })
+        .then((res) => res.json())
+        .then((res) => {
+            if (res) {
+              if(res == null)
+                this.setState({rating: 0})
+              else
+                this.setState({rating: Math.floor(res)}, () => console.log(Math.floor(res)))
             } else throw res
         })
         .catch((res) => console.log(res))
@@ -279,7 +297,7 @@ class Event extends React.Component {
         <NavMenu />
         <Row>
           <Col>
-            <EventCard title={this.state.details.name} details={details} rating={rating} comments={comments} location={this.props.location} button={addCommentBtn}/>
+            <EventCard title={this.state.details.name} details={details} rating={this.state.rating} comments={comments} location={this.props.location} button={addCommentBtn}/>
           </Col>
         </Row>
       </Container>
