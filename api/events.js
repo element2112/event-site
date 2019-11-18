@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const pool = require("../connection");
+const record = require('./record');
 
 router.get("/testevents", (req, res, err) => res.json("events Works"));
 
@@ -273,8 +274,6 @@ router.get("/getrsoevents/:id", (req, res) => {
   });
 });
 
-
-
 router.post("/addrso", (req, res) => {
   const rso_id = req.body.rso_id;
   const event = {
@@ -323,6 +322,7 @@ router.post("/addrso", (req, res) => {
       res.send("Could not add. Time overlaps");
     }
   });
+
 });
 
 /**************************************************************************/
