@@ -411,4 +411,19 @@ router.post("/geteventsbyloc/:id", (req, res) => {
   });
 });
 
+router.post('/join', (req, res) => {
+  const fields = {
+    rso_id: req.query.rso_id,
+    user_id: req.query.user_id
+  }
+
+  const sql = 'INSERT INTO rso_members SET ?'
+
+  pool.query(sql, fields, (err, results) => {
+    if (err) throw err;
+    res.json("test");
+    console.log('rso joined');
+  });
+})
+
 module.exports = router;
