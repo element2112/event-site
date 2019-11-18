@@ -247,41 +247,44 @@ router.post('/requestrso', (req, res) => {
   });
 
 });
-router.post('/join', asyncHandler(async (req, res) => {
+router.post('/joinrso', (req, res) => {
   const member = {
-    rso_id: req.query.rso_id,
-    user_id: req.query.user_id
+    rso_id: req.body.rso_id,
+    user_id: req.body.user_id
   }
 
-  const sql = "INSERT INTO rso_members (user_id, rso_id) VALUES (" + user_id + ", " + rso_id + ")"
+  const sql = "INSERT INTO rso_members SET ?"
 
   pool.query(sql, member, (err, results) => {
     if (err) throw err;
-    res.send("test");
+    res.send(results);
     console.log('rso joined');
   });
-}))
+});
 
 
-router.post('/leave', asyncHandler(async (req, res) => {
+router.delete('/leaverso', (req, res) => {
  
-  const user_id = req.body.user_id
-  const rso_id = req.body.rso_id
+
+  const user_id = req.body.user_id;
+  const rso_id = req.body.rso_id;
 
   const sql1 = 'DELETE FROM rso_members WHERE user_id = ? AND rso_id = ?'
   const sql2 = 'DELETE FROM admins WHERE user_id = ? AND rso_id = ?'
 
   pool.query(sql1, [user_id, rso_id], (err, results) => {
+    
     if (err) throw err;
-    res.json(results);
+    pool.query(sql2, [user_id, rso_id], (err, results) => {
+      if (err) throw err;
+      res.json(results);
+      console.log('admin left');
+    });
+
     console.log('rso left');
   });
 
-  pool.query(sql2, [user_id, rso_id], (err, results) => {
-    if (err) throw err;
-    console.log('admin left');
-  });
-}))
+});
 
 
 
