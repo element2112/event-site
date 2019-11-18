@@ -18,9 +18,10 @@ class Events extends React.Component {
   }
 
   componentDidMount() {
+    this.getRSOEvents();
     this.getPublicEvents();
     this.getPrivateEvents();
-    this.getRSOEvents();
+    
   }
 
   //------------------ API calls ----------------------//
@@ -69,7 +70,25 @@ class Events extends React.Component {
   }
 
   getRSOEvents = () => {
-    
+    fetch("http://localhost:4000/api/events/getrsoevents/" + localStorage.getItem("user_id"), {
+        method: "GET",
+        headers: headers
+    })
+        .then((res) => res.json())
+        .then((res) => {
+            if (res) {
+              const events = [];
+          
+              res.forEach(event => {
+                const start = this.getDateAndTime(event.start_time);
+                const end = this.getTime(event.end_time.toString());
+                events.push({name: event.name, id: event.event_id, start: start, end: end})
+              });
+              this.setState({events: [...this.state.events, ...events]});
+              console.log(res);
+            } else throw res
+        })
+        .catch((res) => console.log(res))
   }
 
   //------------------ helpers ----------------------//

@@ -68,10 +68,10 @@ router.get('/getrsosforuser/:user_id', (req, res) => {
   })
 });
 
-router.post("/reject-rso", async (req, res) => {
+router.post("/reject-rso/:rso_id", async (req, res) => {
   const {
     rso_id
-  } = req.body;
+  } = req.params;
 
   const deleteRso = await record.deleteRso(rso_id);
   const deleteRsoUsers = await record.deleteRsoUsers(rso_id);
@@ -186,6 +186,66 @@ router.delete('/deleterso/:id', (req, res) => {
     if (err) throw err;
     res.send(results);
     console.log('1 rso deleted');
+  });
+
+});
+
+router.post('/requestrso', (req, res) => {
+
+  // request rso
+  const rso = {
+    approved: 0,
+    active: 1,
+    name: req.body.name,
+    uni_id: req.body.uni_id
+  }
+
+  const members = req.body.members;
+
+  let rsoSql = 'INSERT INTO rsos SET ?';
+
+  pool.query(rsoSql, rso, (err, results) => {
+    if (err) throw err;
+    console.log('1 rso added');
+
+    const rso_id = results.insertId;
+
+    let membersIDSql = "select * from users where email in (?)";
+
+    pool.query(membersIDSql, [members], (err, results) => {
+      if (err) throw err;
+      console.log("members ids retrieved")
+
+      let queryMembers = [];
+
+      // form user_id, rso_id pairs
+      results.forEach(member => {
+        queryMembers.push({"user_id": member.user_id, "rso_id": rso_id});
+      });
+
+      // front end must always send admin as first member
+      const admin = {user_id: queryMembers[0].user_id, rso_id: rso_id};
+    
+      //let addMembersSql = "insert into rso_members (user_id, rso_id) VALUES ?"
+      // insert members
+      pool.query(
+        'INSERT INTO rso_members (user_id, rso_id) VALUES ?',
+        [queryMembers.map(item => [item.user_id, item.rso_id])],
+        (error, results) => {
+          console.log("members added")
+        }
+      );
+
+      // insert admin
+      let adminSql = "insert into admins set ?"
+      pool.query(adminSql, admin, (err, results) => {
+        if (err) throw err;
+        res.send(results);
+        console.log('admin added');
+      });
+
+    });
+
   });
 
 });

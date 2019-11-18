@@ -265,12 +265,23 @@ router.get("/getrsoevents/:id", (req, res) => {
   const id = req.params.id;
 
   let sql =
-    "SELECT * FROM rso_events WHERE event_id IN (SELECT event_id FROM rso_members WHERE user_id = ?)"; // this is getting all rso events
+    "select rso_event.event_id from rso_event left join rso_members on rso_members.rso_id = rso_event.rso_id where rso_members.user_id = " + id + " AND event_id IS NOT NULL"
 
   pool.query(sql, id, (err, results) => {
     if (err) throw err;
-    res.send(results);
-    console.log("rso event returned");
+    console.log("rso events returned");
+
+    let sql2 = "select * from events where event_id in (?)"
+
+    pool.query(
+    sql2,
+    [results.map(item => [item.event_id])],
+    (error, results) => {
+      console.log("rso event data returned")
+      res.send(results)
+    }
+  );
+
   });
 });
 

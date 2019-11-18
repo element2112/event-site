@@ -84,6 +84,20 @@ router.get('/superadmins/:id', (req, res) => {
 
 });
 
+// gets all rsos a user is an admin of
+router.get('/admins/:id', (req, res) => {
+  const id = req.params.id;
+
+  let sql = 'select * from rso_members left join rsos on rso_members.rso_id = rsos.rso_id where user_id = ' + id;
+
+  pool.query(sql, (err, results) => {
+    if(err) throw err;
+    res.send(results);
+    console.log("all records received");
+  })
+
+});
+
 
 /**
  * @route	POST  api/users/registeruser

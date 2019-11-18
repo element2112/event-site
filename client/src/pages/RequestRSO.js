@@ -21,33 +21,49 @@ class RequestRSO extends React.Component {
   requestRso = (e) => {
     e.preventDefault();
 
-    fetch("http://localhost:4000/api/rso/addrso", {
+    console.log(this.state.students.split(" "))
+    console.log(this.state.rsoName)
+
+    const members = this.state.students.split(" ");
+
+    if(members.length < 5) 
+      return;
+
+    fetch("http://localhost:4000/api/rso/requestrso", {
         method: "POST",
         headers: headers,
         body: JSON.stringify({
             name: this.state.rsoName,
+            members: members,
             uni_id: localStorage.getItem("uni_id")
-            // members
         })
     })
         .then((res) => res.json())
         .then((res) => {
             if (res) {
-              this.setState({authenticated: true});
+              console.log("requested")
             } else throw res
         })
         .catch((res) => console.log(res))
   }
 
+
+  onChange = (e) => {
+    this.setState({
+      [e.currentTarget.name]: e.currentTarget.value
+    })
+  }
+
   //------------------ Render ----------------------//
   render () {
     const form = (
-      <Form>
+      <Form onSubmit={this.requestRso}>
         <Form.Group controlId="form-basic-rso-name">
-          <Form.Control type="text" placeholder="RSO Name" className="home-input"></Form.Control>
+          <Form.Control type="text" placeholder="RSO Name" className="home-input" name="rsoName" onChange={this.onChange}></Form.Control>
         </Form.Group>
         <Form.Group controlId="form-basic-rso-students">
-          <Form.Control as="textarea" placeholder="Add 5 students" className="home-textarea" rows="10"></Form.Control>
+          <Form.Label>Write student emails separated by a space</Form.Label>
+          <Form.Control as="textarea" placeholder="Add at least 5 students" className="home-textarea" rows="10" name="students" onChange={this.onChange}></Form.Control>
         </Form.Group>
         <Button size="md" type="submit" className="request-btn">
           REQUEST

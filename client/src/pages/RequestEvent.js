@@ -36,7 +36,7 @@ class RequestEvent extends React.Component {
   componentDidMount() {
    // this.checkIsAdmin();
    this.getLocations();
-   this.getRsos();
+   this.getAdminRsos();
   }
 
   //------------------ API calls ----------------------//
@@ -58,12 +58,13 @@ class RequestEvent extends React.Component {
       start_time: start,
       end_time: end,
       location_id: this.state.locationId,
-      university_id: localStorage.getItem("uni_id")
+      university_id: localStorage.getItem("uni_id"),
+      rso_id: this.state.access
     }
 
     if(this.state.access ===  "Public")
       url = "http://localhost:4000/api/events/addpublic";
-    else if(this.state.access = "Private")
+    else if(this.state.access === "Private")
       url = "http://localhost:4000/api/events/addprivate";
     else 
       url = "http://localhost:4000/api/events/addrso";
@@ -127,8 +128,8 @@ class RequestEvent extends React.Component {
         .catch((res) => console.log(res))
   }
 
-  getRsos = () => {
-    fetch("http://localhost:4000/api/rso/getApprovedRsos/" + localStorage.getItem("uni_id"), {
+  getAdminRsos = () => {
+    fetch("http://localhost:4000/api/users/admins/" + localStorage.getItem("user_id"), {
         method: "GET",
         headers: headers
     })

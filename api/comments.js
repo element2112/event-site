@@ -140,3 +140,5 @@ router.get('/geteventrating/:id', (req, res) => {
   });
 
 });
+
+module.exports = router;
