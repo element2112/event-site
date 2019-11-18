@@ -14,6 +14,7 @@ const record = require('./record');
  * @access	public
 */
 
+
 function asyncHandler(cb) {
   return async (req, res, next) => {
     try {
@@ -87,10 +88,10 @@ router.post("/reject-rso/:rso_id", async (req, res) => {
 
 
 // approve rso
-router.post("/approverso/:id", (req, res) => {
+router.patch("/approverso/:id", (req, res) => {
   const { id } = req.params;
 
-  let sql = "UPDATE rsos SET approved = 1 WHERE rso_id = ?";
+  let sql = "UPDATE rsos SET approved = 1, active = 1 WHERE rso_id = ?";
 
   pool.query(sql, id, (err, results) => {
     if (err) throw err;
@@ -145,7 +146,7 @@ router.post('/addrso', asyncHandler(async (req, res) => {
 
   const fields = {
     approved: 0,
-    active: 1,
+    active: 0,
     name: req.body.name,
     uni_id: req.body.uni_id
   }
@@ -164,7 +165,6 @@ router.post('/addrso', asyncHandler(async (req, res) => {
   //     const temp = await record.getUsers(member);
 
   // });
-
   res.send(getUsers)
 }))
 
@@ -247,19 +247,28 @@ router.post('/requestrso', (req, res) => {
   });
 
 });
+
 router.post('/joinrso', (req, res) => {
+  
+  console.log('here');
+  console.log(req.body.user_id);
+  // console.log(req.body.id);
+  
   const member = {
-    rso_id: req.body.rso_id,
-    user_id: req.body.user_id
+    user_id: req.body.user_id,
+    rso_id: req.body.rso_id
   }
 
   const sql = "INSERT INTO rso_members SET ?"
 
+
   pool.query(sql, member, (err, results) => {
+    
     if (err) throw err;
     res.send(results);
-    console.log('rso joined');
+    
   });
+  
 });
 
 
