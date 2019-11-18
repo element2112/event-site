@@ -112,6 +112,20 @@ router.patch('/editcomment/:id', (req, res) => {
 
 });
 
+// router.get('/ratings/:event_id', async (req, res) => {
+  
+//   const sql = 'SELECT * FROM comments WHERE event_id = ?'
+//   const event_id = req.params.event_id
+//   let avgRating = 0;
+
+//   const getRating = await record.getAvgRating(event_id, sql);
+  
+//   for(let i = 0; i< getRating.length; i++){
+//     avgRating += getRating[i].rating;
+//   }
+//   res.json(avgRating)
+// })
+
 /**
  * @route	GET  api/comments/geteventrating
  * @desc	Get average event rating
