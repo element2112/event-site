@@ -8,7 +8,7 @@ function createRso(fields) {
             if (err) {
                 reject(err)
             } else {
-                resolve()
+                resolve(results.insertId)
             }
         })
     });
@@ -91,6 +91,7 @@ function getStuff(name, sql) {
             } else {
                 // console.log(results)
                 const lastItem = results.pop()
+                // console.log(lastItem)
                 resolve(lastItem)
             }
         })
