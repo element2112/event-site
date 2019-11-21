@@ -269,7 +269,6 @@ router.get("/getrsoevents/:id", (req, res) => {
 
   pool.query(sql, id, (err, results) => {
     if (err) throw err;
-    console.log("rso events returned");
 
     let sql2 = "select * from events where event_id in (?)"
 
