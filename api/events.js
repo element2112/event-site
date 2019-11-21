@@ -124,7 +124,7 @@ router.post("/addpublic", (req, res) => {
       });
 
     } else {
-      res.json("Could not add. Time overlaps");
+      res.json("Overlap");
     }
   });
 
@@ -223,7 +223,7 @@ router.post("/addprivate", (req, res) => {
         });
       });
     } else {
-      res.json("Could not add. Time overlaps");
+      res.json("Overlap");
     }
   });
 
@@ -325,12 +325,12 @@ router.post("/addrso", (req, res) => {
         let sql2 = "INSERT INTO rso_event SET ?";
         pool.query(sql2, rso_event, (err, results) => {
           if (err) throw err;
-          res.json(results);
+          res.send(results);
           console.log("1 rso event added");
         });
       });
     } else {
-      res.send("Could not add. Time overlaps");
+      res.json("Overlap");
     }
   });
 

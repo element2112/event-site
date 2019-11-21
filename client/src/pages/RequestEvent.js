@@ -91,10 +91,12 @@ class RequestEvent extends React.Component {
               .then((res) => res.json())
               .then((res) => {
                   if (res) {
-                    console.log(res);
+                    alert("Requested");
                   } else throw res
               }).catch((res) => console.log(res))
-            } else throw res
+            } else {
+              alert("Cannot add, time overlaps");
+            }
         })
         .catch((res) => console.log(res))
     // else just add event with a given location
@@ -106,16 +108,18 @@ class RequestEvent extends React.Component {
       })
       .then((res) => res.json())
       .then((res) => {
-          if (res) {
-            console.log(res);
-          } else throw res
+          if (res !== "Overlap") {
+            alert("Requested")
+          } else {
+            alert("Cannot add, time overlaps");
+          }
       }).catch((res) => console.log(res))
     }
 
   }
 
   getLocations = () => {
-    fetch("http://localhost:4000/api/location/getlocations", {
+    fetch("http://localhost:4000/api/location/getlocations/" + localStorage.getItem("uni_id"), {
         method: "GET",
         headers: headers
     })
@@ -248,7 +252,7 @@ class RequestEvent extends React.Component {
           </FormGroup>
 
           <Form.Group controlId="form-basic-location-select">
-            <Form.Control as="select" required className="home-dropdown text-left event-drop-btn" onChange={this.onChange} name="locationId">
+            <Form.Control as="select" className="home-dropdown text-left event-drop-btn" onChange={this.onChange} name="locationId">
               <option value="" disabled selected>Select Location</option>
               {locations}
             </Form.Control>

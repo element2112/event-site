@@ -283,7 +283,6 @@ class Event extends React.Component {
     const details = 
       <div>
         <p><b>{this.state.details.start} - {this.state.details.end}</b> </p>
-        <p><b>Access: </b>{this.state.details.access}</p>
         <p><b>Category: </b>{this.state.details.category}</p>
         <p><b>Description: </b>{this.state.details.description}</p>
         <p><b>Contact Phone Number: </b>{this.state.details.contactPhone}</p>

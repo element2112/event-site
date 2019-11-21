@@ -41,7 +41,7 @@ class RSOApprovals extends React.Component {
 
   approveRSO = (rso_id) => {
     fetch("http://localhost:4000/api/rso/approverso/" + rso_id, {
-        method: "POST",
+        method: "PATCH",
         headers: headers
     })
         .then((res) => res.json())

@@ -224,7 +224,6 @@ router.post('/requestrso', (req, res) => {
       // front end must always send admin as first member
       const admin = {user_id: queryMembers[0].user_id, rso_id: rso_id};
     
-      //let addMembersSql = "insert into rso_members (user_id, rso_id) VALUES ?"
       // insert members
       pool.query(
         'INSERT INTO rso_members (user_id, rso_id) VALUES ?',
@@ -249,18 +248,12 @@ router.post('/requestrso', (req, res) => {
 });
 
 router.post('/joinrso', (req, res) => {
-  
-  console.log('here');
-  console.log(req.body.user_id);
-  // console.log(req.body.id);
-  
   const member = {
     user_id: req.body.user_id,
     rso_id: req.body.rso_id
   }
 
   const sql = "INSERT INTO rso_members SET ?"
-
 
   pool.query(sql, member, (err, results) => {
     

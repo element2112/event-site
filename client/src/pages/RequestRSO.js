@@ -27,7 +27,7 @@ class RequestRSO extends React.Component {
     const members = this.state.students.split(" ");
 
     if(members.length < 5) {
-      alert("Please enter at least 5 student emails");
+      alert("Please enter at least 5 student emails, and enter the admin email as the first one");
       return;
     }
       
@@ -65,7 +65,7 @@ class RequestRSO extends React.Component {
           <Form.Control type="text" required placeholder="RSO Name" className="home-input" name="rsoName" onChange={this.onChange}></Form.Control>
         </Form.Group>
         <Form.Group controlId="form-basic-rso-students">
-          <Form.Label>Write student emails separated by a space</Form.Label>
+          <Form.Label>Write student emails separated by a space, and list the admin as the first email</Form.Label>
           <Form.Control as="textarea" required placeholder="Add at least 5 students" className="home-textarea" rows="10" name="students" onChange={this.onChange}></Form.Control>
         </Form.Group>
         <Button size="md" type="submit" className="request-btn">
