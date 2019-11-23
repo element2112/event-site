@@ -277,7 +277,7 @@ router.get("/getrsoevents/:id", (req, res) => {
     [results.map(item => [item.event_id])],
     (error, results) => {
       console.log("rso event data returned")
-      res.send(results)
+      res.json(results)
     }
   );
 

@@ -16,7 +16,7 @@ const headers = {
 
 class RequestEvent extends React.Component {
   state = {
-    date: Date.now(),
+    date: new Date(),
     isAdmin: false,
     name: null,
     description: null,
@@ -37,11 +37,17 @@ class RequestEvent extends React.Component {
    // this.checkIsAdmin();
    this.getLocations();
    this.getAdminRsos();
+   this.setState({date: new Date()})
   }
 
   //------------------ API calls ----------------------//
   requestEvent = (e) => {
     e.preventDefault();
+
+    if(this.state.date == null || this.state.startTime == null || this.state.endTime == null) {
+      alert("Please ensure date and time are filled.");
+      return;
+    }
 
     // format into datetime
     const start = `${this.state.date.toISOString().split("T")[0]} ${this.state.startTime}`;
@@ -236,6 +242,7 @@ class RequestEvent extends React.Component {
           </Form.Group>
 
           <FormGroup controlId="form-basic-date">
+            <Form.Label>Date</Form.Label>
             <InfoCard info={datePicker} />
           </FormGroup>
 
@@ -244,10 +251,12 @@ class RequestEvent extends React.Component {
         <div style={{display: "inline-block", flex: "1", paddingLeft: "20px"}}>
 
           <FormGroup controlId="event-start-time">
+            <Form.Label>Start Time</Form.Label>
             <TimePicker start="00:00" end="23:30" step={30} className="event-drop-btn" onChange={this.handleStartTimeChange} value={this.state.startTime} />
           </FormGroup>
 
           <FormGroup controlId="event-end-time">
+            <Form.Label>End Time</Form.Label>
             <TimePicker start="00:00" end="23:30" step={30} className="event-drop-btn" onChange={this.handleEndTimeChange} value={this.state.endTime}/>
           </FormGroup>
 

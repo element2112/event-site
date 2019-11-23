@@ -49,7 +49,7 @@ class HomeCard extends React.Component {
     e.preventDefault();
 
     this.setState({authenticated: true});
-    return false;
+    
   }
 
   //------------------ API calls ----------------------//
@@ -129,9 +129,9 @@ class HomeCard extends React.Component {
         .then((res) => res.json())
         .then((res) => {
           if (res[0].user_id != undefined) {
-            this.setState({authenticated: true});
             localStorage.setItem("user_id", res[0].user_id);
             localStorage.setItem("uni_id", res[0].uni_id);
+            this.setState({authenticated: true});
           } else throw res
         })
         .catch((res) => console.log(res))
